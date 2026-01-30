@@ -1,4 +1,8 @@
-import type { CreateOrderInput, Order } from "../types/order.d";
+import type {
+	CreateOrderInput,
+	Order,
+	OrderApiResponse,
+} from "../types/order.d";
 
 export async function createOrder(
 	orderInput: CreateOrderInput,
@@ -25,12 +29,12 @@ export async function createOrder(
 		);
 	}
 
-	const createdOrder: Order = await response.json();
+	const createdOrder: OrderApiResponse = await response.json();
 	return {
 		...createdOrder,
-		order_date: new Date(createdOrder.order_date).toISOString(),
-		delivery_date: new Date(createdOrder.delivery_date).toISOString(),
-		created_at: new Date(createdOrder.created_at).toISOString(),
-		updated_at: new Date(createdOrder.updated_at).toISOString(),
+		order_date: new Date(createdOrder.order_date),
+		delivery_date: new Date(createdOrder.delivery_date),
+		created_at: new Date(createdOrder.created_at),
+		updated_at: new Date(createdOrder.updated_at),
 	};
 }

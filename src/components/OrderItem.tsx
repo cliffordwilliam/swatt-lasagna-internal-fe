@@ -1,8 +1,8 @@
 import type React from "react";
-import type { OrderRow } from "../types/order";
+import type { Order } from "../types/order";
 
 interface OrderItemProps {
-	order: OrderRow;
+	order: Order;
 }
 
 const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
@@ -15,7 +15,9 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
 			<td>{order.buyer_name}</td>
 			<td>{order.recipient_name}</td>
 			<td>{order.total_amount.toFixed(2)}</td>
-			<td>{order.order_status_id}</td>
+			<td>{order.order_status_name}</td>
+			<td>{order.delivery_method_name}</td>
+			<td>{order.payment_method_name}</td>
 		</tr>
 	);
 };

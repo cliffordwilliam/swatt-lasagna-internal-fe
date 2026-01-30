@@ -1,11 +1,11 @@
-import type { OrderRow } from "../types/order";
+import type { Order } from "../types/order";
 
-export async function getOrders(): Promise<OrderRow[]> {
+export async function getOrders(): Promise<Order[]> {
 	const response = await fetch("http://localhost:3000/orders");
 	if (!response.ok) {
 		throw new Error(`HTTP error! status: ${response.status}`);
 	}
-	const data: OrderRow[] = await response.json();
+	const data: Order[] = await response.json();
 	return data.map((order) => ({
 		...order,
 		order_date: new Date(order.order_date),

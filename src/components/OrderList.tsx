@@ -5,7 +5,7 @@ import React, {
 	useState,
 } from "react";
 import { getOrders } from "../api/orders";
-import type { OrderRow } from "../types/order";
+import type { Order } from "../types/order";
 import OrderItem from "./OrderItem";
 
 export interface OrderListRef {
@@ -16,7 +16,7 @@ type OrderListProps = {};
 
 const OrderList = React.forwardRef<OrderListRef, OrderListProps>(
 	(_props, ref) => {
-		const [orders, setOrders] = useState<OrderRow[]>([]);
+		const [orders, setOrders] = useState<Order[]>([]);
 		const [loading, setLoading] = useState<boolean>(true);
 		const [error, setError] = useState<string | null>(null);
 
@@ -63,6 +63,8 @@ const OrderList = React.forwardRef<OrderListRef, OrderListProps>(
 								<th>Recipient Name</th>
 								<th>Total Amount</th>
 								<th>Status</th>
+								<th>Delivery Method</th>
+								<th>Payment Method</th>
 							</tr>
 						</thead>
 						<tbody>
