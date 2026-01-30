@@ -1,6 +1,7 @@
 import type React from "react";
 import { useCallback, useState } from "react";
 import type { CreateOrderInput } from "../types/order";
+import ItemDropdown from "./ItemDropdown";
 
 interface CreateOrderFormProps {
 	onSubmitOrder: (data: CreateOrderInput) => Promise<void>;
@@ -52,9 +53,6 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmitOrder }) => {
 					break;
 				case "shipping_cost":
 					setShippingCost(Number(value));
-					break;
-				case "item_id":
-					setItemId(Number(value));
 					break;
 				case "quantity":
 					setQuantity(Number(value));
@@ -186,15 +184,8 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmitOrder }) => {
 					/>
 				</div>
 				<div>
-					<label htmlFor="item_id">Item ID (first item):</label>
-					<input
-						type="number"
-						id="item_id"
-						name="item_id"
-						value={itemId}
-						onChange={handleFormChange}
-						required
-					/>
+					<label htmlFor="item_dropdown">Select Item (first item):</label>
+					<ItemDropdown onItemSelected={setItemId} initialItemId={itemId} />
 				</div>
 				<div>
 					<label htmlFor="quantity">Quantity (first item):</label>
