@@ -1,8 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import OrdersPage from "./pages/OrdersPage";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<h1>Hello World</h1>
+		<OrdersPage />
 	</StrictMode>,
 );
