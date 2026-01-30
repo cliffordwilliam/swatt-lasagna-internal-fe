@@ -4,7 +4,7 @@ import { getItems } from "../api/items";
 import type { Item } from "../types/item";
 
 interface ItemDropdownProps {
-	onItemSelected: (itemId: number) => void;
+	onItemSelected: (item: Item | undefined) => void;
 	initialItemId?: number;
 }
 
@@ -13,9 +13,7 @@ const ItemDropdown: React.FC<ItemDropdownProps> = ({
 	initialItemId,
 }) => {
 	const [items, setItems] = useState<Item[]>([]);
-	const [selectedItemId, setSelectedItemId] = useState<number | undefined>(
-		initialItemId,
-	);
+	const [selectedItem, setSelectedItem] = useState<Item | undefined>(undefined);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -24,11 +22,16 @@ const ItemDropdown: React.FC<ItemDropdownProps> = ({
 			try {
 				const fetchedItems = await getItems();
 				setItems(fetchedItems);
-				if (fetchedItems.length > 0 && selectedItemId === undefined) {
-					setSelectedItemId(fetchedItems[0].id);
-					onItemSelected(fetchedItems[0].id);
-				} else if (selectedItemId !== undefined) {
-					onItemSelected(selectedItemId);
+				if (fetchedItems.length > 0 && initialItemId === undefined) {
+					const firstItem = fetchedItems[0];
+					setSelectedItem(firstItem);
+					onItemSelected(firstItem);
+				} else if (initialItemId !== undefined) {
+					const initialSelectedItem = fetchedItems.find(
+						(item) => item.id === initialItemId,
+					);
+					setSelectedItem(initialSelectedItem);
+					onItemSelected(initialSelectedItem);
 				}
 			} catch (err) {
 				setError("Failed to load items.");
@@ -39,12 +42,13 @@ const ItemDropdown: React.FC<ItemDropdownProps> = ({
 		};
 
 		fetchItems();
-	}, [onItemSelected, selectedItemId]);
+	}, [onItemSelected, initialItemId]);
 
 	const handleItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const newItemId = Number(e.target.value);
-		setSelectedItemId(newItemId);
-		onItemSelected(newItemId);
+		const selected = items.find((item) => item.id === newItemId);
+		setSelectedItem(selected);
+		onItemSelected(selected);
 	};
 
 	if (isLoading) {
@@ -60,7 +64,7 @@ const ItemDropdown: React.FC<ItemDropdownProps> = ({
 	}
 
 	return (
-		<select value={selectedItemId} onChange={handleItemChange}>
+		<select value={selectedItem?.id} onChange={handleItemChange}>
 			{items.map((item) => (
 				<option key={item.id} value={item.id}>
 					{item.name}

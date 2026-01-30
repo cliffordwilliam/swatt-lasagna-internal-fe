@@ -1,7 +1,6 @@
-import type React from "react";
 import { useCallback, useState } from "react";
 import type { CreateOrderInput } from "../types/order";
-import ItemDropdown from "./ItemDropdown";
+import Cart from "./Cart";
 
 interface CreateOrderFormProps {
 	onSubmitOrder: (data: CreateOrderInput) => Promise<void>;
@@ -20,9 +19,11 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmitOrder }) => {
 	const [orderStatusId, setOrderStatusId] = useState<number>(1);
 	const [shippingCost, setShippingCost] = useState<number>(0);
 	const [note, setNote] = useState<string>("");
-	const [itemId, setItemId] = useState<number>(1);
-	const [quantity, setQuantity] = useState<number>(1);
+	const [currentOrderCartItems, setCurrentOrderCartItems] = useState<
+		Array<{ item_id: number; quantity: number }>
+	>([]);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+	const [formKey, setFormKey] = useState<number>(0);
 
 	const handleFormChange = useCallback(
 		(
@@ -54,9 +55,6 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmitOrder }) => {
 				case "shipping_cost":
 					setShippingCost(Number(value));
 					break;
-				case "quantity":
-					setQuantity(Number(value));
-					break;
 				case "note":
 					setNote(value);
 					break;
@@ -82,7 +80,7 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmitOrder }) => {
 				order_status_id: orderStatusId,
 				shipping_cost: shippingCost,
 				note: note,
-				items: [{ item_id: itemId, quantity: quantity }],
+				items: currentOrderCartItems,
 			};
 			await onSubmitOrder(formData);
 			setOrderNumber("");
@@ -93,12 +91,12 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmitOrder }) => {
 			setOrderStatusId(1);
 			setShippingCost(0);
 			setNote("");
-			setItemId(1);
-			setQuantity(1);
+			setCurrentOrderCartItems([]);
 			setOrderDate(new Date().toISOString());
 			setDeliveryDate(new Date().toISOString());
 		} finally {
 			setIsSubmitting(false);
+			setFormKey((prevKey) => prevKey + 1);
 		}
 	};
 
@@ -183,21 +181,7 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmitOrder }) => {
 						required
 					/>
 				</div>
-				<div>
-					<label htmlFor="item_dropdown">Select Item (first item):</label>
-					<ItemDropdown onItemSelected={setItemId} initialItemId={itemId} />
-				</div>
-				<div>
-					<label htmlFor="quantity">Quantity (first item):</label>
-					<input
-						type="number"
-						id="quantity"
-						name="quantity"
-						value={quantity}
-						onChange={handleFormChange}
-						required
-					/>
-				</div>
+				<Cart key={formKey} onCartItemsChange={setCurrentOrderCartItems} />
 				<div>
 					<label htmlFor="note">Note:</label>
 					<textarea
