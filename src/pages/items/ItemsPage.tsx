@@ -1,25 +1,43 @@
-import { CircularProgress, Container, Typography } from "@mui/material";
-import { ItemsTable } from "../../components/items/ItemsTable";
+import { Container, Typography } from "@mui/material";
+import { useState } from "react";
+import type { Item } from "../../api/items";
+import { ItemActionsDrawer } from "../../components/items/ItemActionsDrawer";
+import { ItemsList } from "../../components/items/ItemsList";
+import { PageError } from "../../components/ui/PageError";
+import { PageLoading } from "../../components/ui/PageLoading";
 import { useItems } from "./useItems";
 
 function ItemsPage() {
 	const { items, loading, error } = useItems();
+	const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 
-	if (loading) {
-		return (
-			<Container sx={{ py: 4, display: "flex", justifyContent: "center" }}>
-				<CircularProgress />
-			</Container>
-		);
-	}
+	const handleActionClick = (item: Item) => {
+		setSelectedItem(item);
+		setDrawerOpen(true);
+	};
 
+	const handleDrawerClose = () => {
+		setDrawerOpen(false);
+	};
+
+	const handleEdit = () => {
+		if (selectedItem) {
+			console.log("Edit", selectedItem);
+		}
+		setDrawerOpen(false);
+	};
+
+	const handleDelete = () => {
+		if (selectedItem) {
+			console.log("Delete", selectedItem);
+		}
+		setDrawerOpen(false);
+	};
+
+	if (loading) return <PageLoading />;
 	if (error) {
-		return (
-			<Container sx={{ py: 4 }}>
-				<Typography variant="h4">Items</Typography>
-				<Typography color="error">{error}</Typography>
-			</Container>
-		);
+		return <PageError title="Items" message={error} />;
 	}
 
 	return (
@@ -27,12 +45,17 @@ function ItemsPage() {
 			<Typography variant="h4" gutterBottom>
 				Items
 			</Typography>
-
 			{items.length === 0 ? (
 				<Typography>No items found.</Typography>
 			) : (
-				<ItemsTable items={items} />
+				<ItemsList items={items} onActionClick={handleActionClick} />
 			)}
+			<ItemActionsDrawer
+				open={drawerOpen}
+				onClose={handleDrawerClose}
+				onEdit={handleEdit}
+				onDelete={handleDelete}
+			/>
 		</Container>
 	);
 }
