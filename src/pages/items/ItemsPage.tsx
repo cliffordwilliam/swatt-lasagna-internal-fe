@@ -1,4 +1,10 @@
-import { Container, Typography } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import {
+	Container,
+	InputAdornment,
+	TextField,
+	Typography,
+} from "@mui/material";
 import { useState } from "react";
 import type { Item } from "../../api/items";
 import { ItemActionsDrawer } from "../../components/items/ItemActionsDrawer";
@@ -11,6 +17,7 @@ function ItemsPage() {
 	const { items, loading, error } = useItems();
 	const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 	const [drawerOpen, setDrawerOpen] = useState(false);
+	const [searchQuery, setSearchQuery] = useState("");
 
 	const handleActionClick = (item: Item) => {
 		setSelectedItem(item);
@@ -35,6 +42,10 @@ function ItemsPage() {
 		setDrawerOpen(false);
 	};
 
+	const filteredItems = items.filter((item) =>
+		item.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+	);
+
 	if (loading) return <PageLoading />;
 	if (error) {
 		return <PageError title="Items" message={error} />;
@@ -45,11 +56,32 @@ function ItemsPage() {
 			<Typography variant="h4" gutterBottom>
 				Items
 			</Typography>
-			{items.length === 0 ? (
+
+			<TextField
+				id="search-items"
+				placeholder="Search items"
+				variant="outlined"
+				fullWidth
+				value={searchQuery}
+				onChange={(e) => setSearchQuery(e.target.value)}
+				slotProps={{
+					input: {
+						startAdornment: (
+							<InputAdornment position="start">
+								<SearchIcon />
+							</InputAdornment>
+						),
+					},
+				}}
+				sx={{ mb: 3 }}
+			/>
+
+			{filteredItems.length === 0 ? (
 				<Typography>No items found.</Typography>
 			) : (
-				<ItemsList items={items} onActionClick={handleActionClick} />
+				<ItemsList items={filteredItems} onActionClick={handleActionClick} />
 			)}
+
 			<ItemActionsDrawer
 				open={drawerOpen}
 				onClose={handleDrawerClose}

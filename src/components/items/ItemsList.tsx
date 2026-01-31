@@ -21,7 +21,7 @@ export function ItemsList({
 }) {
 	return (
 		<Paper>
-			<List>
+			<List disablePadding>
 				{items.map((item) => (
 					<ListItem
 						key={item.id}
