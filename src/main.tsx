@@ -1,3 +1,4 @@
+import CssBaseline from "@mui/material/CssBaseline";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import OrdersPage from "./pages/OrdersPage";
@@ -8,6 +9,7 @@ import "@fontsource/roboto/700.css";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
+		<CssBaseline />
 		<OrdersPage />
 	</StrictMode>,
 );
