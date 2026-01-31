@@ -11,7 +11,7 @@ import {
 	useNavigate,
 } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import ItemsPage from "./pages/ItemsPage";
+import ItemsPage from "./pages/items/ItemsPage";
 import OrdersPage from "./pages/OrdersPage";
 
 function AppContent() {
