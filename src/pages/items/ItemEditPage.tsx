@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { PageError } from "../../components/ui/PageError";
 import { PageLoading } from "../../components/ui/PageLoading";
 import { formatIDR } from "../../utils/money";
+import { normalizeNameForDb } from "../../utils/string";
 import { useItem } from "./useItem";
 import { useUpdateItem } from "./useUpdateItem";
 
@@ -38,7 +39,7 @@ function ItemEditPage() {
 		if (!id) return;
 		try {
 			await update(id, {
-				name,
+				name: normalizeNameForDb(name),
 				price: parseInt(price.replace(/\D/g, ""), 10),
 			});
 			enqueueSnackbar("Item updated successfully", { variant: "success" });
@@ -74,6 +75,7 @@ function ItemEditPage() {
 					label="Name"
 					value={name}
 					onChange={(e) => setName(e.target.value)}
+					onBlur={(e) => setName(normalizeNameForDb(e.target.value))}
 					margin="normal"
 					required
 				/>
