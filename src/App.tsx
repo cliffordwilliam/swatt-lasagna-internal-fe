@@ -19,14 +19,9 @@ function AppContent() {
 	const location = useLocation();
 
 	const getPageIndex = (pathname: string) => {
-		switch (pathname) {
-			case "/orders":
-				return 0;
-			case "/items":
-				return 1;
-			default:
-				return 0;
-		}
+		if (pathname.startsWith("/items")) return 1;
+		if (pathname.startsWith("/orders")) return 0;
+		return 0;
 	};
 
 	const handleNavigationChange = (
