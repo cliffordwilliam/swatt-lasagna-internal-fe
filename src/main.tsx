@@ -7,6 +7,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { ClerkProvider } from "@clerk/clerk-react";
+import { SnackbarProvider } from "notistack";
 import validateEnv from "./env";
 
 validateEnv();
@@ -15,7 +16,13 @@ createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		<ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
 			<CssBaseline />
-			<App />
+			<SnackbarProvider
+				maxSnack={3}
+				anchorOrigin={{ vertical: "top", horizontal: "center" }}
+				autoHideDuration={3000}
+			>
+				<App />
+			</SnackbarProvider>
 		</ClerkProvider>
 	</StrictMode>,
 );

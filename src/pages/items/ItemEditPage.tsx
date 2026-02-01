@@ -1,5 +1,6 @@
 import SaveIcon from "@mui/icons-material/Save";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageError } from "../../components/ui/PageError";
@@ -15,6 +16,7 @@ function ItemEditPage() {
 	const { update, loading: updating, error: updateError } = useUpdateItem();
 	const [name, setName] = useState("");
 	const [price, setPrice] = useState("");
+	const { enqueueSnackbar } = useSnackbar();
 
 	useEffect(() => {
 		if (item) {
@@ -39,8 +41,11 @@ function ItemEditPage() {
 				name,
 				price: parseInt(price.replace(/\D/g, ""), 10),
 			});
+			enqueueSnackbar("Item updated successfully", { variant: "success" });
 			navigate("/items");
-		} catch (e) {}
+		} catch (e) {
+			enqueueSnackbar("Failed to update item", { variant: "error" });
+		}
 	};
 
 	const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
