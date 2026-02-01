@@ -1,7 +1,15 @@
 import { SignedIn, SignedOut, SignIn, UserButton } from "@clerk/clerk-react";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { BottomNavigation, BottomNavigationAction, Box } from "@mui/material";
+import {
+	AppBar,
+	BottomNavigation,
+	BottomNavigationAction,
+	Box,
+	Paper,
+	Toolbar,
+	Typography,
+} from "@mui/material";
 import {
 	BrowserRouter,
 	Navigate,
@@ -60,16 +68,15 @@ function AppContent() {
 						minHeight: "100vh",
 					}}
 				>
-					<Box
-						sx={{
-							position: "fixed",
-							top: 16,
-							right: 16,
-							zIndex: 1000,
-						}}
-					>
-						<UserButton />
-					</Box>
+					<Box sx={{ pt: 7, flexShrink: 0 }} />
+					<AppBar position="fixed">
+						<Toolbar>
+							<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+								Swatt Lasagna
+							</Typography>
+							<UserButton />
+						</Toolbar>
+					</AppBar>
 					<Box
 						sx={{
 							flex: 1,
@@ -86,25 +93,22 @@ function AppContent() {
 						</Routes>
 					</Box>
 					<Box sx={{ pb: 7, flexShrink: 0 }} />
-					<BottomNavigation
-						value={getPageIndex(location.pathname)}
-						onChange={handleNavigationChange}
-						showLabels
-						sx={{
-							position: "fixed",
-							bottom: 0,
-							left: 0,
-							right: 0,
-							borderTop: 1,
-							borderColor: "divider",
-						}}
+					<Paper
+						sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
+						elevation={3}
 					>
-						<BottomNavigationAction
-							label="Orders"
-							icon={<ShoppingCartIcon />}
-						/>
-						<BottomNavigationAction label="Items" icon={<InventoryIcon />} />
-					</BottomNavigation>
+						<BottomNavigation
+							value={getPageIndex(location.pathname)}
+							onChange={handleNavigationChange}
+							showLabels
+						>
+							<BottomNavigationAction
+								label="Orders"
+								icon={<ShoppingCartIcon />}
+							/>
+							<BottomNavigationAction label="Items" icon={<InventoryIcon />} />
+						</BottomNavigation>
+					</Paper>
 				</Box>
 			</SignedIn>
 		</>
