@@ -11,9 +11,13 @@ export async function apiFetch<T>(
 			...options.headers,
 		},
 	});
-
 	if (!res.ok) {
 		throw new Error(await res.text());
+	}
+
+	const contentLength = res.headers.get("content-length");
+	if (contentLength === "0" || contentLength === null) {
+		return undefined as T;
 	}
 
 	return res.json();

@@ -6,6 +6,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Item } from "../../api/items";
 import { ItemActionsDrawer } from "../../components/items/ItemActionsDrawer";
 import { ItemsList } from "../../components/items/ItemsList";
@@ -18,6 +19,7 @@ function ItemsPage() {
 	const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
+	const navigate = useNavigate();
 
 	const handleActionClick = (item: Item) => {
 		setSelectedItem(item);
@@ -30,7 +32,7 @@ function ItemsPage() {
 
 	const handleEdit = () => {
 		if (selectedItem) {
-			console.log("Edit", selectedItem);
+			navigate(`/items/${selectedItem.id}/edit`);
 		}
 		setDrawerOpen(false);
 	};
