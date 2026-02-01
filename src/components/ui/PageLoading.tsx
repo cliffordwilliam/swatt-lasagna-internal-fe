@@ -1,9 +1,16 @@
-import { CircularProgress, Container } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 export function PageLoading() {
 	return (
-		<Container sx={{ py: 4, display: "flex", justifyContent: "center" }}>
+		<Box
+			sx={{
+				flex: 1,
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+			}}
+		>
 			<CircularProgress />
-		</Container>
+		</Box>
 	);
 }

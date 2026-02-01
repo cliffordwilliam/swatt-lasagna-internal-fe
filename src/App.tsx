@@ -53,7 +53,13 @@ function AppContent() {
 				</Box>
 			</SignedOut>
 			<SignedIn>
-				<Box sx={{ pb: 7 }}>
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						minHeight: "100vh",
+					}}
+				>
 					<Box
 						sx={{
 							position: "fixed",
@@ -64,12 +70,22 @@ function AppContent() {
 					>
 						<UserButton />
 					</Box>
-					<Routes>
-						<Route path="/orders" element={<OrdersPage />} />
-						<Route path="/items" element={<ItemsPage />} />
-						<Route path="/items/:id/edit" element={<ItemEditPage />} />
-						<Route path="*" element={<Navigate to="/orders" replace />} />
-					</Routes>
+					<Box
+						sx={{
+							flex: 1,
+							display: "flex",
+							flexDirection: "column",
+							minHeight: 0,
+						}}
+					>
+						<Routes>
+							<Route path="/orders" element={<OrdersPage />} />
+							<Route path="/items" element={<ItemsPage />} />
+							<Route path="/items/:id/edit" element={<ItemEditPage />} />
+							<Route path="*" element={<Navigate to="/orders" replace />} />
+						</Routes>
+					</Box>
+					<Box sx={{ pb: 7, flexShrink: 0 }} />
 					<BottomNavigation
 						value={getPageIndex(location.pathname)}
 						onChange={handleNavigationChange}
