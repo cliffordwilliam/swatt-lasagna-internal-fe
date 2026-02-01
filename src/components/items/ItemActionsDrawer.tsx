@@ -36,7 +36,7 @@ export function ItemActionsDrawer({
 					</ListItem>
 					<Divider />
 					<ListItem disablePadding>
-						<ListItemButton onClick={onDelete}>
+						<ListItemButton onClick={onDelete} disabled>
 							<ListItemIcon>
 								<DeleteIcon />
 							</ListItemIcon>

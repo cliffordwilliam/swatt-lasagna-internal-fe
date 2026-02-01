@@ -39,7 +39,6 @@ function ItemsPage() {
 
 	const handleDelete = () => {
 		if (selectedItem) {
-			console.log("Delete", selectedItem);
 		}
 		setDrawerOpen(false);
 	};
