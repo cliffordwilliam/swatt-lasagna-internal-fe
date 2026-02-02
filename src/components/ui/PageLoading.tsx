@@ -1,8 +1,8 @@
-import { Box, CircularProgress } from "@mui/material";
+import { CircularProgress, Container } from "@mui/material";
 
 export function PageLoading() {
 	return (
-		<Box
+		<Container
 			sx={{
 				flex: 1,
 				display: "flex",
@@ -11,6 +11,6 @@ export function PageLoading() {
 			}}
 		>
 			<CircularProgress />
-		</Box>
+		</Container>
 	);
 }

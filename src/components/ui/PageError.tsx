@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 
 interface Props {
 	title?: string;
@@ -7,7 +7,7 @@ interface Props {
 
 export function PageError({ title, message }: Props) {
 	return (
-		<Box
+		<Container
 			sx={{
 				flex: 1,
 				display: "flex",
@@ -23,6 +23,6 @@ export function PageError({ title, message }: Props) {
 				)}
 				<Typography color="error">{message}</Typography>
 			</Box>
-		</Box>
+		</Container>
 	);
 }
