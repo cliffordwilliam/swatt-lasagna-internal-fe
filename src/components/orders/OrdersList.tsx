@@ -1,0 +1,99 @@
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import {
+	Box,
+	Button,
+	Card,
+	Chip,
+	Divider,
+	Stack,
+	Typography,
+} from "@mui/material";
+import type { ChipProps } from "@mui/material/Chip";
+import type { Order } from "../../api/orders";
+import { formatIDR } from "../../utils/money";
+
+function getOrderStatusColor(statusName: string): ChipProps["color"] {
+	switch (statusName.toLowerCase()) {
+		case "belum bayar":
+			return "warning";
+		case "downpayment":
+			return "info";
+		case "lunas":
+			return "success";
+		default:
+			return "default";
+	}
+}
+
+function formatDate(isoString: string): string {
+	return new Date(isoString).toLocaleDateString("id-ID", {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+	});
+}
+
+export function OrdersList({ orders }: { orders: Order[] }) {
+	return (
+		<Stack spacing={2}>
+			{orders.map((order) => (
+				<Card key={order.id}>
+					<Box sx={{ p: 2 }}>
+						<Typography gutterBottom variant="h5" component="div">
+							{order.order_number}
+						</Typography>
+						<Stack direction="row" spacing={1} alignItems="center">
+							<CalendarTodayIcon fontSize="small" color="action" />
+							<Typography variant="body2" color="text.secondary">
+								{formatDate(order.order_date)}
+							</Typography>
+						</Stack>
+						<Stack
+							direction="row"
+							sx={{ justifyContent: "space-between", alignItems: "center" }}
+						>
+							<Stack direction="row" spacing={1} alignItems="center">
+								<LocalShippingIcon fontSize="small" color="action" />
+								<Typography variant="body2" color="text.secondary">
+									{formatDate(order.delivery_date)}
+								</Typography>
+							</Stack>
+							<Chip
+								label={order.order_status_name}
+								variant="outlined"
+								color={getOrderStatusColor(order.order_status_name)}
+							/>
+						</Stack>
+					</Box>
+					<Divider />
+					<Box sx={{ p: 2 }}>
+						<Typography gutterBottom variant="h6" component="div">
+							{order.recipient_name}
+						</Typography>
+						{order.recipient_address && (
+							<Typography variant="body2" color="text.secondary">
+								{order.recipient_address}
+							</Typography>
+						)}
+					</Box>
+					<Divider />
+					<Box sx={{ p: 2 }}>
+						<Stack
+							direction="row"
+							sx={{
+								justifyContent: "space-between",
+								alignItems: "center",
+							}}
+						>
+							<Typography fontWeight="medium" component="div">
+								{formatIDR(order.total_amount)}
+							</Typography>
+							<Button size="small">Detail</Button>
+						</Stack>
+					</Box>
+				</Card>
+			))}
+		</Stack>
+	);
+}
