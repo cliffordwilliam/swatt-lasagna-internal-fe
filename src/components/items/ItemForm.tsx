@@ -23,7 +23,6 @@ export function ItemForm({
 	initialPrice,
 	onSubmit,
 	loading = false,
-	error,
 	submitLabel,
 }: ItemFormProps) {
 	const [name, setName] = useState(initialName);
@@ -58,11 +57,6 @@ export function ItemForm({
 
 	return (
 		<Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-			{error && (
-				<Typography color="error" sx={{ mb: 2 }}>
-					{error}
-				</Typography>
-			)}
 			<TextField
 				fullWidth
 				label="Name"

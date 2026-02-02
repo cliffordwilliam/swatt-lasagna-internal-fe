@@ -13,7 +13,7 @@ function ItemEditPage() {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 	const { item, loading, error } = useItem(id);
-	const { update, loading: updating, error: updateError } = useUpdateItem();
+	const { update, loading: updating } = useUpdateItem();
 	const [initialName, setInitialName] = useState("");
 	const [initialPrice, setInitialPrice] = useState("");
 	const { enqueueSnackbar } = useSnackbar();
@@ -31,8 +31,11 @@ function ItemEditPage() {
 			await update(id, values);
 			enqueueSnackbar("Item updated successfully", { variant: "success" });
 			navigate("/items");
-		} catch {
-			enqueueSnackbar("Failed to update item", { variant: "error" });
+		} catch (e) {
+			enqueueSnackbar(
+				e instanceof Error ? e.message : "Failed to update item",
+				{ variant: "error" },
+			);
 		}
 	};
 
@@ -54,7 +57,6 @@ function ItemEditPage() {
 				initialPrice={initialPrice}
 				onSubmit={handleSubmit}
 				loading={updating}
-				error={updateError}
 				submitLabel="Save Changes"
 			/>
 		</Container>
