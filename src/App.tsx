@@ -18,6 +18,7 @@ import {
 	useLocation,
 	useNavigate,
 } from "react-router-dom";
+import ItemCreatePage from "./pages/items/ItemCreatePage";
 import ItemEditPage from "./pages/items/ItemEditPage";
 import ItemsPage from "./pages/items/ItemsPage";
 import OrdersPage from "./pages/orders/OrdersPage";
@@ -88,6 +89,7 @@ function AppContent() {
 						<Routes>
 							<Route path="/orders" element={<OrdersPage />} />
 							<Route path="/items" element={<ItemsPage />} />
+							<Route path="/items/create" element={<ItemCreatePage />} />
 							<Route path="/items/:id/edit" element={<ItemEditPage />} />
 							<Route path="*" element={<Navigate to="/orders" replace />} />
 						</Routes>

@@ -1,6 +1,8 @@
+import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import {
 	Container,
+	Fab,
 	InputAdornment,
 	TextField,
 	Typography,
@@ -53,7 +55,7 @@ function ItemsPage() {
 	}
 
 	return (
-		<Container sx={{ py: 4 }}>
+		<Container sx={{ py: 4, pb: 11 }}>
 			<Typography variant="h4" gutterBottom>
 				Items
 			</Typography>
@@ -82,6 +84,19 @@ function ItemsPage() {
 			) : (
 				<ItemsList items={filteredItems} onActionClick={handleActionClick} />
 			)}
+
+			<Fab
+				sx={{
+					position: "fixed",
+					bottom: 72,
+					right: 16,
+				}}
+				color="primary"
+				aria-label="Add"
+				onClick={() => navigate("/items/create")}
+			>
+				<AddIcon />
+			</Fab>
 
 			<ItemActionsDrawer
 				open={drawerOpen}
