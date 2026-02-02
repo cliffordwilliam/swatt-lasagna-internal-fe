@@ -1,15 +1,9 @@
-/** Matches BE error-handler response shape: message (required), details (validation only) */
 interface ApiErrorBody {
 	message: string;
-	details?: unknown;
 }
 
 export class ApiError extends Error {
-	constructor(
-		message: string,
-		public readonly statusCode: number,
-		public readonly details?: unknown,
-	) {
+	constructor(message: string) {
 		super(message);
 		this.name = "ApiError";
 	}
@@ -36,10 +30,10 @@ export async function apiFetch<T>(
 			if (typeof body.message === "string") {
 				message = body.message;
 			}
-			throw new ApiError(message, res.status, body.details);
+			throw new ApiError(message);
 		} catch (e) {
 			if (e instanceof ApiError) throw e;
-			throw new ApiError(message, res.status);
+			throw new ApiError(message);
 		}
 	}
 
