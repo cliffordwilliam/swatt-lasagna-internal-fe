@@ -14,6 +14,7 @@ import { ItemActionsDrawer } from "../../components/items/ItemActionsDrawer";
 import { ItemsList } from "../../components/items/ItemsList";
 import { PageError } from "../../components/ui/PageError";
 import { PageLoading } from "../../components/ui/PageLoading";
+import { normalizeNameForDb } from "../../utils/string";
 import { useItems } from "./useItems";
 
 function ItemsPage() {
@@ -45,8 +46,9 @@ function ItemsPage() {
 		setDrawerOpen(false);
 	};
 
+	const normalizedQuery = normalizeNameForDb(searchQuery);
 	const filteredItems = items.filter((item) =>
-		item.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+		normalizeNameForDb(item.name ?? "").includes(normalizedQuery),
 	);
 
 	if (loading) return <PageLoading />;

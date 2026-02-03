@@ -22,10 +22,10 @@ export function ItemsList({
 	return (
 		<Paper>
 			<List disablePadding>
-				{items.map((item) => (
+				{items.map((item, index) => (
 					<ListItem
 						key={item.id}
-						divider
+						divider={index !== items.length - 1}
 						secondaryAction={
 							<IconButton
 								edge="end"

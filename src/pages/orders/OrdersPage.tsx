@@ -8,12 +8,14 @@ import {
 	Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { OrdersList } from "../../components/orders/OrdersList";
 import { PageError } from "../../components/ui/PageError";
 import { PageLoading } from "../../components/ui/PageLoading";
 import { useOrders } from "./useOrders";
 
 function OrdersPage() {
+	const navigate = useNavigate();
 	const { orders, loading, error } = useOrders();
 	const [searchQuery, setSearchQuery] = useState("");
 
@@ -67,7 +69,7 @@ function OrdersPage() {
 				}}
 				color="primary"
 				aria-label="Add"
-				onClick={() => {}}
+				onClick={() => navigate("/orders/create")}
 			>
 				<AddIcon />
 			</Fab>
