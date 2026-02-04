@@ -23,6 +23,7 @@ import ItemEditPage from "./pages/items/ItemEditPage";
 import ItemsPage from "./pages/items/ItemsPage";
 import OrderCreatePage from "./pages/orders/OrderCreatePage";
 import OrdersPage from "./pages/orders/OrdersPage";
+import PersonCreatePage from "./pages/persons/PersonCreatePage";
 
 function AppContent() {
 	const navigate = useNavigate();
@@ -93,6 +94,7 @@ function AppContent() {
 							<Route path="/items" element={<ItemsPage />} />
 							<Route path="/items/create" element={<ItemCreatePage />} />
 							<Route path="/items/:id/edit" element={<ItemEditPage />} />
+							<Route path="/persons/create" element={<PersonCreatePage />} />
 							<Route path="*" element={<Navigate to="/orders" replace />} />
 						</Routes>
 					</Box>

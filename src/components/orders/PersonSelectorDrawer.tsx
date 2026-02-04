@@ -1,14 +1,17 @@
 import { useAuth } from "@clerk/clerk-react";
+import AddIcon from "@mui/icons-material/Add";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {
 	Box,
 	Container,
 	Drawer,
+	Fab,
 	IconButton,
 	TextField,
 	Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { Person } from "../../api/persons";
 import { searchPersons } from "../../api/persons";
 import { normalizeNameForDb } from "../../utils/string";
@@ -32,6 +35,8 @@ export function PersonSelectorDrawer({
 	selectedPersonId = null,
 }: PersonSelectorDrawerProps) {
 	const { getToken } = useAuth();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [persons, setPersons] = useState<Person[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searching, setSearching] = useState(false);
@@ -123,6 +128,12 @@ export function PersonSelectorDrawer({
 				? "Search for a person by name."
 				: "No person found for that name.";
 
+	const handleAddPerson = () => {
+		navigate("/persons/create", {
+			state: { returnPath: location.pathname },
+		});
+	};
+
 	return (
 		<Drawer
 			anchor="right"
@@ -175,6 +186,18 @@ export function PersonSelectorDrawer({
 					emptyMessage={emptyMessage}
 				/>
 			</Container>
+			<Fab
+				sx={{
+					position: "absolute",
+					bottom: 16,
+					right: 16,
+				}}
+				color="primary"
+				aria-label="Add person"
+				onClick={handleAddPerson}
+			>
+				<AddIcon />
+			</Fab>
 		</Drawer>
 	);
 }
