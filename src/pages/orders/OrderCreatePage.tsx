@@ -1,18 +1,22 @@
 import { Container, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Address } from "../../api/addresses";
 import type { Person } from "../../api/persons";
 import type { Phone } from "../../api/phones";
 import { AddressSelectorDrawer } from "../../components/addresses/AddressSelectorDrawer";
+import { OptionSelectorDrawer } from "../../components/orders/OptionSelectorDrawer";
 import { OrderForm } from "../../components/orders/OrderForm";
 import { PersonSelectorDrawer } from "../../components/orders/PersonSelectorDrawer";
 import { PhoneSelectorDrawer } from "../../components/phones/PhoneSelectorDrawer";
+import { useOrderOptions } from "./useOrderOptions";
 
 type DrawerMode = "buyer" | "recipient" | null;
 type PhoneDrawerMode = "buyer" | "recipient" | null;
 type AddressDrawerMode = "buyer" | "recipient" | null;
+type OptionDrawerMode = "delivery" | "payment" | "status" | null;
 
 function OrderCreatePage() {
+	const { deliveryMethods, paymentMethods, orderStatuses } = useOrderOptions();
 	const [buyer, setBuyer] = useState<Person | null>(null);
 	const [recipient, setRecipient] = useState<Person | null>(null);
 	const [buyerPhone, setBuyerPhone] = useState<Phone | null>(null);
@@ -21,10 +25,32 @@ function OrderCreatePage() {
 	const [recipientAddress, setRecipientAddress] = useState<Address | null>(
 		null,
 	);
+	const [deliveryMethodId, setDeliveryMethodId] = useState<number | null>(null);
+	const [paymentMethodId, setPaymentMethodId] = useState<number | null>(null);
+	const [orderStatusId, setOrderStatusId] = useState<number | null>(null);
 	const [drawerMode, setDrawerMode] = useState<DrawerMode>(null);
 	const [phoneDrawerMode, setPhoneDrawerMode] = useState<PhoneDrawerMode>(null);
 	const [addressDrawerMode, setAddressDrawerMode] =
 		useState<AddressDrawerMode>(null);
+	const [optionDrawerMode, setOptionDrawerMode] =
+		useState<OptionDrawerMode>(null);
+
+	// Ensure one option is always selected when options load
+	useEffect(() => {
+		if (deliveryMethods.length > 0 && deliveryMethodId === null) {
+			setDeliveryMethodId(deliveryMethods[0].id);
+		}
+	}, [deliveryMethods, deliveryMethodId]);
+	useEffect(() => {
+		if (paymentMethods.length > 0 && paymentMethodId === null) {
+			setPaymentMethodId(paymentMethods[0].id);
+		}
+	}, [paymentMethods, paymentMethodId]);
+	useEffect(() => {
+		if (orderStatuses.length > 0 && orderStatusId === null) {
+			setOrderStatusId(orderStatuses[0].id);
+		}
+	}, [orderStatuses, orderStatusId]);
 
 	const selectedPersonId =
 		drawerMode === "buyer"
@@ -106,12 +132,21 @@ function OrderCreatePage() {
 				recipientPhone={recipientPhone}
 				buyerAddress={buyerAddress}
 				recipientAddress={recipientAddress}
+				deliveryMethods={deliveryMethods}
+				paymentMethods={paymentMethods}
+				orderStatuses={orderStatuses}
+				deliveryMethodId={deliveryMethodId}
+				paymentMethodId={paymentMethodId}
+				orderStatusId={orderStatusId}
 				onSelectBuyer={() => setDrawerMode("buyer")}
 				onSelectRecipient={() => setDrawerMode("recipient")}
 				onSelectBuyerPhone={() => setPhoneDrawerMode("buyer")}
 				onSelectRecipientPhone={() => setPhoneDrawerMode("recipient")}
 				onSelectBuyerAddress={() => setAddressDrawerMode("buyer")}
 				onSelectRecipientAddress={() => setAddressDrawerMode("recipient")}
+				onOpenDeliveryMethodDrawer={() => setOptionDrawerMode("delivery")}
+				onOpenPaymentMethodDrawer={() => setOptionDrawerMode("payment")}
+				onOpenOrderStatusDrawer={() => setOptionDrawerMode("status")}
 			/>
 			<PersonSelectorDrawer
 				open={drawerMode !== null}
@@ -138,6 +173,30 @@ function OrderCreatePage() {
 					selectedAddressId={selectedAddressId}
 				/>
 			)}
+			<OptionSelectorDrawer
+				open={optionDrawerMode === "delivery"}
+				title="Delivery method"
+				options={deliveryMethods}
+				selectedId={deliveryMethodId}
+				onClose={() => setOptionDrawerMode(null)}
+				onSelect={setDeliveryMethodId}
+			/>
+			<OptionSelectorDrawer
+				open={optionDrawerMode === "payment"}
+				title="Payment method"
+				options={paymentMethods}
+				selectedId={paymentMethodId}
+				onClose={() => setOptionDrawerMode(null)}
+				onSelect={setPaymentMethodId}
+			/>
+			<OptionSelectorDrawer
+				open={optionDrawerMode === "status"}
+				title="Order status"
+				options={orderStatuses}
+				selectedId={orderStatusId}
+				onClose={() => setOptionDrawerMode(null)}
+				onSelect={setOrderStatusId}
+			/>
 		</Container>
 	);
 }

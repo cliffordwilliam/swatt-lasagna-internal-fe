@@ -1,5 +1,8 @@
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import PaymentIcon from "@mui/icons-material/Payment";
 import PersonIcon from "@mui/icons-material/Person";
 import PhoneIcon from "@mui/icons-material/Phone";
 import {
@@ -14,6 +17,11 @@ import {
 	Paper,
 } from "@mui/material";
 import type { Address } from "../../api/addresses";
+import type {
+	DeliveryMethod,
+	OrderStatus,
+	PaymentMethod,
+} from "../../api/orders";
 import type { Person } from "../../api/persons";
 import type { Phone } from "../../api/phones";
 
@@ -24,12 +32,21 @@ export interface OrderFormProps {
 	recipientPhone: Phone | null;
 	buyerAddress: Address | null;
 	recipientAddress: Address | null;
+	deliveryMethods: DeliveryMethod[];
+	paymentMethods: PaymentMethod[];
+	orderStatuses: OrderStatus[];
+	deliveryMethodId: number | null;
+	paymentMethodId: number | null;
+	orderStatusId: number | null;
 	onSelectBuyer: () => void;
 	onSelectRecipient: () => void;
 	onSelectBuyerPhone: () => void;
 	onSelectRecipientPhone: () => void;
 	onSelectBuyerAddress: () => void;
 	onSelectRecipientAddress: () => void;
+	onOpenDeliveryMethodDrawer: () => void;
+	onOpenPaymentMethodDrawer: () => void;
+	onOpenOrderStatusDrawer: () => void;
 }
 
 interface PersonListItemProps {
@@ -133,6 +150,37 @@ function AddressSelectionRow({
 	);
 }
 
+interface OptionSelectionRowProps {
+	selectedName: string | null;
+	placeholder: string;
+	label: string;
+	onClick: () => void;
+	icon: React.ReactNode;
+}
+
+function OptionSelectionRow({
+	selectedName,
+	placeholder,
+	label,
+	onClick,
+	icon,
+}: OptionSelectionRowProps) {
+	return (
+		<ListItem disablePadding divider>
+			<ListItemButton onClick={onClick}>
+				<ListItemAvatar>
+					<Avatar>{icon}</Avatar>
+				</ListItemAvatar>
+				<ListItemText
+					primary={selectedName ?? placeholder}
+					secondary={selectedName ? label : "Tap to choose"}
+				/>
+				<ChevronRightIcon />
+			</ListItemButton>
+		</ListItem>
+	);
+}
+
 export function OrderForm({
 	buyer,
 	recipient,
@@ -140,19 +188,45 @@ export function OrderForm({
 	recipientPhone,
 	buyerAddress,
 	recipientAddress,
+	deliveryMethods,
+	paymentMethods,
+	orderStatuses,
+	deliveryMethodId,
+	paymentMethodId,
+	orderStatusId,
 	onSelectBuyer,
 	onSelectRecipient,
 	onSelectBuyerPhone,
 	onSelectRecipientPhone,
 	onSelectBuyerAddress,
 	onSelectRecipientAddress,
+	onOpenDeliveryMethodDrawer,
+	onOpenPaymentMethodDrawer,
+	onOpenOrderStatusDrawer,
 }: OrderFormProps) {
+	const deliveryMethodName =
+		deliveryMethodId !== null
+			? (deliveryMethods.find((m) => m.id === deliveryMethodId)?.name ?? null)
+			: null;
+	const paymentMethodName =
+		paymentMethodId !== null
+			? (paymentMethods.find((m) => m.id === paymentMethodId)?.name ?? null)
+			: null;
+	const orderStatusName =
+		orderStatusId !== null
+			? (orderStatuses.find((s) => s.id === orderStatusId)?.name ?? null)
+			: null;
+
 	return (
 		<Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 3 }}>
 			<Paper>
 				<List
 					disablePadding
-					subheader={<ListSubheader component="div">Buyer</ListSubheader>}
+					subheader={
+						<ListSubheader disableSticky component="div">
+							Buyer
+						</ListSubheader>
+					}
 				>
 					<PersonSelectionRow
 						person={buyer}
@@ -179,7 +253,11 @@ export function OrderForm({
 			<Paper>
 				<List
 					disablePadding
-					subheader={<ListSubheader component="div">Recipient</ListSubheader>}
+					subheader={
+						<ListSubheader disableSticky component="div">
+							Recipient
+						</ListSubheader>
+					}
 				>
 					<PersonSelectionRow
 						person={recipient}
@@ -200,6 +278,38 @@ export function OrderForm({
 						label="Recipient Address"
 						onClick={onSelectRecipientAddress}
 						disabled={!recipient}
+					/>
+				</List>
+			</Paper>
+			<Paper>
+				<List
+					disablePadding
+					subheader={
+						<ListSubheader disableSticky component="div">
+							Order details
+						</ListSubheader>
+					}
+				>
+					<OptionSelectionRow
+						selectedName={deliveryMethodName}
+						placeholder="Select delivery method"
+						label="Delivery method"
+						onClick={onOpenDeliveryMethodDrawer}
+						icon={<LocalShippingIcon />}
+					/>
+					<OptionSelectionRow
+						selectedName={paymentMethodName}
+						placeholder="Select payment method"
+						label="Payment method"
+						onClick={onOpenPaymentMethodDrawer}
+						icon={<PaymentIcon />}
+					/>
+					<OptionSelectionRow
+						selectedName={orderStatusName}
+						placeholder="Select order status"
+						label="Order status"
+						onClick={onOpenOrderStatusDrawer}
+						icon={<AssignmentIcon />}
 					/>
 				</List>
 			</Paper>
