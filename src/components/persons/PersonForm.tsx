@@ -1,5 +1,4 @@
-import SaveIcon from "@mui/icons-material/Save";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { normalizeNameForDb } from "../../utils/string";
 
@@ -10,17 +9,11 @@ export interface PersonFormValues {
 export interface PersonFormProps {
 	initialName: string;
 	onSubmit: (values: PersonFormValues) => void | Promise<void>;
-	loading?: boolean;
 	error?: string | null;
-	submitLabel: string;
+	formId: string;
 }
 
-export function PersonForm({
-	initialName,
-	onSubmit,
-	loading = false,
-	submitLabel,
-}: PersonFormProps) {
+export function PersonForm({ initialName, onSubmit, formId }: PersonFormProps) {
 	const [name, setName] = useState(initialName);
 
 	useEffect(() => {
@@ -39,7 +32,12 @@ export function PersonForm({
 	};
 
 	return (
-		<Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+		<Box
+			component="form"
+			id={formId}
+			onSubmit={handleSubmit}
+			sx={{ mt: 3, px: 2 }}
+		>
 			<TextField
 				fullWidth
 				label="Name"
@@ -49,17 +47,6 @@ export function PersonForm({
 				margin="normal"
 				required
 			/>
-			<Button
-				type="submit"
-				variant="contained"
-				size="large"
-				fullWidth
-				disabled={loading}
-				sx={{ mt: 2 }}
-				startIcon={<SaveIcon />}
-			>
-				{submitLabel}
-			</Button>
 		</Box>
 	);
 }

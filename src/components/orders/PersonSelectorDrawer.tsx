@@ -11,10 +11,10 @@ import {
 	Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import type { Person } from "../../api/persons";
 import { searchPersons } from "../../api/persons";
 import { normalizeNameForDb } from "../../utils/string";
+import { PersonCreateDialog } from "../persons/PersonCreateDialog";
 import { PersonsList } from "../persons/PersonsList";
 
 type SelectorMode = "buyer" | "recipient" | null;
@@ -35,9 +35,8 @@ export function PersonSelectorDrawer({
 	selectedPersonId = null,
 }: PersonSelectorDrawerProps) {
 	const { getToken } = useAuth();
-	const navigate = useNavigate();
-	const location = useLocation();
 	const [persons, setPersons] = useState<Person[]>([]);
+	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searching, setSearching] = useState(false);
 	const [searchError, setSearchError] = useState<string | null>(null);
@@ -129,9 +128,7 @@ export function PersonSelectorDrawer({
 				: "No person found for that name.";
 
 	const handleAddPerson = () => {
-		navigate("/persons/create", {
-			state: { returnPath: location.pathname },
-		});
+		setCreateDialogOpen(true);
 	};
 
 	return (
@@ -198,6 +195,10 @@ export function PersonSelectorDrawer({
 			>
 				<AddIcon />
 			</Fab>
+			<PersonCreateDialog
+				open={createDialogOpen}
+				onClose={() => setCreateDialogOpen(false)}
+			/>
 		</Drawer>
 	);
 }
