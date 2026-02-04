@@ -15,7 +15,10 @@ import {
 	ListItemText,
 	ListSubheader,
 	Paper,
+	TextField,
 } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 import type { Address } from "../../api/addresses";
 import type {
 	DeliveryMethod,
@@ -24,8 +27,20 @@ import type {
 } from "../../api/orders";
 import type { Person } from "../../api/persons";
 import type { Phone } from "../../api/phones";
+import { formatIDR } from "../../utils/money";
+import { normalizeSpaces } from "../../utils/string";
 
 export interface OrderFormProps {
+	orderNumber: string;
+	orderDate: string;
+	deliveryDate: string;
+	shippingCost: string;
+	note: string;
+	onOrderNumberChange: (value: string) => void;
+	onOrderDateChange: (value: string) => void;
+	onDeliveryDateChange: (value: string) => void;
+	onShippingCostChange: (value: string) => void;
+	onNoteChange: (value: string) => void;
 	buyer: Person | null;
 	recipient: Person | null;
 	buyerPhone: Phone | null;
@@ -182,6 +197,16 @@ function OptionSelectionRow({
 }
 
 export function OrderForm({
+	orderNumber,
+	orderDate,
+	deliveryDate,
+	shippingCost,
+	note,
+	onOrderNumberChange,
+	onOrderDateChange,
+	onDeliveryDateChange,
+	onShippingCostChange,
+	onNoteChange,
 	buyer,
 	recipient,
 	buyerPhone,
@@ -204,6 +229,15 @@ export function OrderForm({
 	onOpenPaymentMethodDrawer,
 	onOpenOrderStatusDrawer,
 }: OrderFormProps) {
+	const handleShippingCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value.replace(/\D/g, "");
+		if (value === "") {
+			onShippingCostChange("");
+			return;
+		}
+		onShippingCostChange(formatIDR(parseInt(value, 10)));
+	};
+
 	const deliveryMethodName =
 		deliveryMethodId !== null
 			? (deliveryMethods.find((m) => m.id === deliveryMethodId)?.name ?? null)
@@ -219,6 +253,54 @@ export function OrderForm({
 
 	return (
 		<Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 3 }}>
+			<Paper>
+				<List
+					disablePadding
+					subheader={
+						<ListSubheader disableSticky component="div">
+							Order Information
+						</ListSubheader>
+					}
+				>
+					<ListItem
+						sx={{
+							flexDirection: "column",
+							alignItems: "stretch",
+							px: 2,
+							pb: 2,
+						}}
+					>
+						<TextField
+							fullWidth
+							label="Order Number"
+							value={orderNumber}
+							onChange={(e) => onOrderNumberChange(e.target.value)}
+							onBlur={(e) =>
+								onOrderNumberChange(normalizeSpaces(e.target.value))
+							}
+							margin="normal"
+							required
+							slotProps={{ htmlInput: { maxLength: 50, readOnly: true } }}
+						/>
+						<DatePicker
+							label="Order Date"
+							value={orderDate ? dayjs(orderDate) : null}
+							onChange={(newValue) => {
+								onOrderDateChange(
+									newValue ? newValue.format("YYYY-MM-DD") : "",
+								);
+							}}
+							slotProps={{
+								textField: {
+									fullWidth: true,
+									margin: "normal",
+									required: true,
+								},
+							}}
+						/>
+					</ListItem>
+				</List>
+			</Paper>
 			<Paper>
 				<List
 					disablePadding
@@ -286,7 +368,7 @@ export function OrderForm({
 					disablePadding
 					subheader={
 						<ListSubheader disableSticky component="div">
-							Order details
+							Order Details
 						</ListSubheader>
 					}
 				>
@@ -311,6 +393,60 @@ export function OrderForm({
 						onClick={onOpenOrderStatusDrawer}
 						icon={<AssignmentIcon />}
 					/>
+				</List>
+			</Paper>
+			<Paper>
+				<List
+					disablePadding
+					subheader={
+						<ListSubheader disableSticky component="div">
+							Additional Details
+						</ListSubheader>
+					}
+				>
+					<ListItem
+						sx={{
+							flexDirection: "column",
+							alignItems: "stretch",
+							px: 2,
+							pb: 2,
+						}}
+					>
+						<DatePicker
+							label="Delivery Date"
+							value={deliveryDate ? dayjs(deliveryDate) : null}
+							onChange={(newValue) => {
+								onDeliveryDateChange(
+									newValue ? newValue.format("YYYY-MM-DD") : "",
+								);
+							}}
+							slotProps={{
+								textField: {
+									fullWidth: true,
+									margin: "normal",
+									required: true,
+								},
+							}}
+						/>
+						<TextField
+							fullWidth
+							label="Shipping Cost"
+							value={shippingCost}
+							onChange={handleShippingCostChange}
+							margin="normal"
+							required
+						/>
+						<TextField
+							fullWidth
+							label="Note"
+							value={note}
+							onChange={(e) => onNoteChange(e.target.value)}
+							margin="normal"
+							multiline
+							rows={4}
+							slotProps={{ htmlInput: { maxLength: 500 } }}
+						/>
+					</ListItem>
 				</List>
 			</Paper>
 		</Box>

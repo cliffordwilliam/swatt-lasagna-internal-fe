@@ -10,6 +10,8 @@ import {
 	Toolbar,
 	Typography,
 } from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import {
 	BrowserRouter,
 	Navigate,
@@ -121,9 +123,11 @@ function AppContent() {
 
 function App() {
 	return (
-		<BrowserRouter>
-			<AppContent />
-		</BrowserRouter>
+		<LocalizationProvider dateAdapter={AdapterDayjs}>
+			<BrowserRouter>
+				<AppContent />
+			</BrowserRouter>
+		</LocalizationProvider>
 	);
 }
 

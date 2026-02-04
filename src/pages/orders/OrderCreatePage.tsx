@@ -17,6 +17,11 @@ type OptionDrawerMode = "delivery" | "payment" | "status" | null;
 
 function OrderCreatePage() {
 	const { deliveryMethods, paymentMethods, orderStatuses } = useOrderOptions();
+	const [orderNumber, setOrderNumber] = useState("");
+	const [orderDate, setOrderDate] = useState("");
+	const [deliveryDate, setDeliveryDate] = useState("");
+	const [shippingCost, setShippingCost] = useState("");
+	const [note, setNote] = useState("");
 	const [buyer, setBuyer] = useState<Person | null>(null);
 	const [recipient, setRecipient] = useState<Person | null>(null);
 	const [buyerPhone, setBuyerPhone] = useState<Phone | null>(null);
@@ -126,6 +131,16 @@ function OrderCreatePage() {
 				Create Order
 			</Typography>
 			<OrderForm
+				orderNumber={orderNumber}
+				orderDate={orderDate}
+				deliveryDate={deliveryDate}
+				shippingCost={shippingCost}
+				note={note}
+				onOrderNumberChange={setOrderNumber}
+				onOrderDateChange={setOrderDate}
+				onDeliveryDateChange={setDeliveryDate}
+				onShippingCostChange={setShippingCost}
+				onNoteChange={setNote}
 				buyer={buyer}
 				recipient={recipient}
 				buyerPhone={buyerPhone}

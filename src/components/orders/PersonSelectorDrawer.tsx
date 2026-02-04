@@ -131,6 +131,17 @@ export function PersonSelectorDrawer({
 		setCreateDialogOpen(true);
 	};
 
+	const handleCreateSuccess = useCallback(() => {
+		if (debounceRef.current !== null) {
+			clearTimeout(debounceRef.current);
+			debounceRef.current = null;
+		}
+		setSearchQuery("");
+		setPersons([]);
+		setSearchError(null);
+		setSearching(false);
+	}, []);
+
 	return (
 		<Drawer
 			anchor="right"
@@ -198,6 +209,7 @@ export function PersonSelectorDrawer({
 			<PersonCreateDialog
 				open={createDialogOpen}
 				onClose={() => setCreateDialogOpen(false)}
+				onSuccess={handleCreateSuccess}
 			/>
 		</Drawer>
 	);

@@ -125,6 +125,17 @@ export function PhoneSelectorDrawer({
 		setCreateDialogOpen(true);
 	};
 
+	const handleCreateSuccess = useCallback(() => {
+		if (debounceRef.current !== null) {
+			clearTimeout(debounceRef.current);
+			debounceRef.current = null;
+		}
+		setSearchQuery("");
+		setPhones([]);
+		setSearchError(null);
+		setSearching(false);
+	}, []);
+
 	return (
 		<Drawer
 			anchor="right"
@@ -193,6 +204,7 @@ export function PhoneSelectorDrawer({
 				open={createDialogOpen}
 				personId={personId}
 				onClose={() => setCreateDialogOpen(false)}
+				onSuccess={handleCreateSuccess}
 			/>
 		</Drawer>
 	);

@@ -125,6 +125,17 @@ export function AddressSelectorDrawer({
 		setCreateDialogOpen(true);
 	};
 
+	const handleCreateSuccess = useCallback(() => {
+		if (debounceRef.current !== null) {
+			clearTimeout(debounceRef.current);
+			debounceRef.current = null;
+		}
+		setSearchQuery("");
+		setAddresses([]);
+		setSearchError(null);
+		setSearching(false);
+	}, []);
+
 	return (
 		<Drawer
 			anchor="right"
@@ -193,6 +204,7 @@ export function AddressSelectorDrawer({
 				open={createDialogOpen}
 				personId={personId}
 				onClose={() => setCreateDialogOpen(false)}
+				onSuccess={handleCreateSuccess}
 			/>
 		</Drawer>
 	);
