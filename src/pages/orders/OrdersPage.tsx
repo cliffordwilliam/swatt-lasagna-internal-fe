@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import type { Order } from "../../api/orders";
+import { OrderActionsDrawer } from "../../components/orders/OrderActionsDrawer";
 import { OrdersList } from "../../components/orders/OrdersList";
 import { PageError } from "../../components/ui/PageError";
 import { PageLoading } from "../../components/ui/PageLoading";
@@ -18,6 +20,24 @@ function OrdersPage() {
 	const navigate = useNavigate();
 	const { orders, loading, error } = useOrders();
 	const [searchQuery, setSearchQuery] = useState("");
+	const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+	const [drawerOpen, setDrawerOpen] = useState(false);
+
+	const handleActionClick = (order: Order) => {
+		setSelectedOrder(order);
+		setDrawerOpen(true);
+	};
+
+	const handleDrawerClose = () => {
+		setDrawerOpen(false);
+	};
+
+	const handleUpdate = () => {
+		if (selectedOrder) {
+			navigate(`/orders/${selectedOrder.id}/edit`);
+		}
+		setDrawerOpen(false);
+	};
 
 	const filteredOrders = orders.filter(
 		(order) =>
@@ -58,7 +78,7 @@ function OrdersPage() {
 			{filteredOrders.length === 0 ? (
 				<Typography>No orders found.</Typography>
 			) : (
-				<OrdersList orders={filteredOrders} />
+				<OrdersList orders={filteredOrders} onActionClick={handleActionClick} />
 			)}
 
 			<Fab
@@ -73,6 +93,12 @@ function OrdersPage() {
 			>
 				<AddIcon />
 			</Fab>
+
+			<OrderActionsDrawer
+				open={drawerOpen}
+				onClose={handleDrawerClose}
+				onUpdate={handleUpdate}
+			/>
 		</Container>
 	);
 }

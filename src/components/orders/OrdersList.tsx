@@ -1,11 +1,12 @@
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
 	Box,
-	Button,
 	Card,
 	Chip,
 	Divider,
+	IconButton,
 	Stack,
 	Typography,
 } from "@mui/material";
@@ -34,7 +35,13 @@ function formatDate(isoString: string): string {
 	});
 }
 
-export function OrdersList({ orders }: { orders: Order[] }) {
+export function OrdersList({
+	orders,
+	onActionClick,
+}: {
+	orders: Order[];
+	onActionClick: (order: Order) => void;
+}) {
 	return (
 		<Stack spacing={2}>
 			{orders.map((order) => (
@@ -89,7 +96,13 @@ export function OrdersList({ orders }: { orders: Order[] }) {
 							<Typography fontWeight="medium" component="div">
 								{formatIDR(order.total_amount)}
 							</Typography>
-							<Button size="small">Detail</Button>
+							<IconButton
+								edge="end"
+								aria-label="actions"
+								onClick={() => onActionClick(order)}
+							>
+								<MoreVertIcon />
+							</IconButton>
 						</Stack>
 					</Box>
 				</Card>

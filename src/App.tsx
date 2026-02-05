@@ -24,6 +24,7 @@ import ItemCreatePage from "./pages/items/ItemCreatePage";
 import ItemEditPage from "./pages/items/ItemEditPage";
 import ItemsPage from "./pages/items/ItemsPage";
 import OrderCreatePage from "./pages/orders/OrderCreatePage";
+import OrderEditPage from "./pages/orders/OrderEditPage";
 import OrdersPage from "./pages/orders/OrdersPage";
 
 function AppContent() {
@@ -92,6 +93,7 @@ function AppContent() {
 						<Routes>
 							<Route path="/orders" element={<OrdersPage />} />
 							<Route path="/orders/create" element={<OrderCreatePage />} />
+							<Route path="/orders/:id/edit" element={<OrderEditPage />} />
 							<Route path="/items" element={<ItemsPage />} />
 							<Route path="/items/create" element={<ItemCreatePage />} />
 							<Route path="/items/:id/edit" element={<ItemEditPage />} />

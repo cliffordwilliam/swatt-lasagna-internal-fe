@@ -66,6 +66,7 @@ export interface OrderFormProps {
 	onOpenOrderStatusDrawer: () => void;
 	onSubmit?: () => void | Promise<void>;
 	loading?: boolean;
+	submitLabel?: string;
 }
 
 interface PersonListItemProps {
@@ -234,6 +235,7 @@ export function OrderForm({
 	onOpenOrderStatusDrawer,
 	onSubmit,
 	loading = false,
+	submitLabel = "Create Order",
 }: OrderFormProps) {
 	const handleShippingCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value.replace(/\D/g, "");
@@ -468,7 +470,7 @@ export function OrderForm({
 					disabled={loading}
 				>
 					<SaveIcon sx={{ mr: 1 }} />
-					Create Order
+					{submitLabel}
 				</Fab>
 			)}
 		</Box>
