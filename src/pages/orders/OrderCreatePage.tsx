@@ -1,13 +1,26 @@
-import { Container, Typography } from "@mui/material";
+import {
+	Container,
+	List,
+	ListItem,
+	ListItemText,
+	ListSubheader,
+	Paper,
+	Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import type { Address } from "../../api/addresses";
 import type { Person } from "../../api/persons";
 import type { Phone } from "../../api/phones";
 import { AddressSelectorDrawer } from "../../components/addresses/AddressSelectorDrawer";
+import {
+	type CartItem,
+	CartItemsManager,
+} from "../../components/orders/CartItemsManager";
 import { OptionSelectorDrawer } from "../../components/orders/OptionSelectorDrawer";
 import { OrderForm } from "../../components/orders/OrderForm";
 import { PersonSelectorDrawer } from "../../components/orders/PersonSelectorDrawer";
 import { PhoneSelectorDrawer } from "../../components/phones/PhoneSelectorDrawer";
+import { formatIDR } from "../../utils/money";
 import { useOrderOptions } from "./useOrderOptions";
 
 type DrawerMode = "buyer" | "recipient" | null;
@@ -39,6 +52,7 @@ function OrderCreatePage() {
 		useState<AddressDrawerMode>(null);
 	const [optionDrawerMode, setOptionDrawerMode] =
 		useState<OptionDrawerMode>(null);
+	const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
 	// Ensure one option is always selected when options load
 	useEffect(() => {
@@ -124,6 +138,20 @@ function OrderCreatePage() {
 		}
 		setAddressDrawerMode(null);
 	};
+
+	// Calculate subtotal from cart items
+	const subtotal = cartItems.reduce(
+		(sum, cartItem) => sum + cartItem.item.price * cartItem.quantity,
+		0,
+	);
+
+	// Parse shipping cost from formatted string (remove non-digits)
+	const shipping = shippingCost
+		? parseInt(shippingCost.replace(/\D/g, ""), 10) || 0
+		: 0;
+
+	// Calculate total
+	const total = subtotal + shipping;
 
 	return (
 		<Container sx={{ py: 4 }}>
@@ -212,6 +240,45 @@ function OrderCreatePage() {
 				onClose={() => setOptionDrawerMode(null)}
 				onSelect={setOrderStatusId}
 			/>
+			<CartItemsManager
+				cartItems={cartItems}
+				onCartItemsChange={setCartItems}
+			/>
+			<Paper sx={{ mt: 3 }}>
+				<List
+					disablePadding
+					subheader={
+						<ListSubheader disableSticky component="div">
+							Order Summary
+						</ListSubheader>
+					}
+				>
+					<ListItem divider>
+						<ListItemText primary="Subtotal" />
+						<Typography variant="body2" color="text.secondary">
+							{formatIDR(subtotal)}
+						</Typography>
+					</ListItem>
+					<ListItem divider>
+						<ListItemText primary="Shipping" />
+						<Typography variant="body2" color="text.secondary">
+							{shippingCost ? formatIDR(shipping) : formatIDR(0)}
+						</Typography>
+					</ListItem>
+					<ListItem>
+						<ListItemText
+							primary={
+								<Typography variant="subtitle1" fontWeight="bold">
+									Total
+								</Typography>
+							}
+						/>
+						<Typography variant="subtitle1" fontWeight="bold">
+							{formatIDR(total)}
+						</Typography>
+					</ListItem>
+				</List>
+			</Paper>
 		</Container>
 	);
 }
