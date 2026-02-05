@@ -41,3 +41,35 @@ export interface OrderStatus {
 export function listOrderStatuses(token: string | null) {
 	return apiFetch<OrderStatus[]>("/api/order-statuses/", token);
 }
+
+export interface CreateOrderRequest {
+	order_number: string;
+	order_date: string;
+	delivery_date: string;
+	buyer: {
+		id: number;
+		phone: { id: number };
+		address: { id: number };
+	};
+	recipient: {
+		id: number;
+		phone: { id: number };
+		address: { id: number };
+	};
+	delivery_method_id: number;
+	payment_method_id: number;
+	order_status_id: number;
+	shipping_cost: number;
+	note?: string;
+	items: Array<{
+		item_id: number;
+		quantity: number;
+	}>;
+}
+
+export function createOrder(data: CreateOrderRequest, token: string | null) {
+	return apiFetch<void>("/api/orders/", token, {
+		method: "POST",
+		body: JSON.stringify(data),
+	});
+}

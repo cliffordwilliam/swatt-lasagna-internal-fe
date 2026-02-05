@@ -5,9 +5,11 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PaymentIcon from "@mui/icons-material/Payment";
 import PersonIcon from "@mui/icons-material/Person";
 import PhoneIcon from "@mui/icons-material/Phone";
+import SaveIcon from "@mui/icons-material/Save";
 import {
 	Avatar,
 	Box,
+	Fab,
 	List,
 	ListItem,
 	ListItemAvatar,
@@ -62,6 +64,8 @@ export interface OrderFormProps {
 	onOpenDeliveryMethodDrawer: () => void;
 	onOpenPaymentMethodDrawer: () => void;
 	onOpenOrderStatusDrawer: () => void;
+	onSubmit?: () => void | Promise<void>;
+	loading?: boolean;
 }
 
 interface PersonListItemProps {
@@ -228,6 +232,8 @@ export function OrderForm({
 	onOpenDeliveryMethodDrawer,
 	onOpenPaymentMethodDrawer,
 	onOpenOrderStatusDrawer,
+	onSubmit,
+	loading = false,
 }: OrderFormProps) {
 	const handleShippingCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value.replace(/\D/g, "");
@@ -280,7 +286,7 @@ export function OrderForm({
 							}
 							margin="normal"
 							required
-							slotProps={{ htmlInput: { maxLength: 50, readOnly: true } }}
+							slotProps={{ htmlInput: { maxLength: 50 } }}
 						/>
 						<DatePicker
 							label="Order Date"
@@ -449,6 +455,22 @@ export function OrderForm({
 					</ListItem>
 				</List>
 			</Paper>
+			{onSubmit && (
+				<Fab
+					variant="extended"
+					color="primary"
+					sx={{
+						position: "fixed",
+						bottom: 72,
+						right: 16,
+					}}
+					onClick={onSubmit}
+					disabled={loading}
+				>
+					<SaveIcon sx={{ mr: 1 }} />
+					Create Order
+				</Fab>
+			)}
 		</Box>
 	);
 }

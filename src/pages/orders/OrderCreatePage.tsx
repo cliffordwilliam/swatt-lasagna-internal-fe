@@ -7,7 +7,9 @@ import {
 	Paper,
 	Typography,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Address } from "../../api/addresses";
 import type { Person } from "../../api/persons";
 import type { Phone } from "../../api/phones";
@@ -21,6 +23,7 @@ import { OrderForm } from "../../components/orders/OrderForm";
 import { PersonSelectorDrawer } from "../../components/orders/PersonSelectorDrawer";
 import { PhoneSelectorDrawer } from "../../components/phones/PhoneSelectorDrawer";
 import { formatIDR } from "../../utils/money";
+import { useCreateOrder } from "./useCreateOrder";
 import { useOrderOptions } from "./useOrderOptions";
 
 type DrawerMode = "buyer" | "recipient" | null;
@@ -29,6 +32,9 @@ type AddressDrawerMode = "buyer" | "recipient" | null;
 type OptionDrawerMode = "delivery" | "payment" | "status" | null;
 
 function OrderCreatePage() {
+	const navigate = useNavigate();
+	const { enqueueSnackbar } = useSnackbar();
+	const { create, loading } = useCreateOrder();
 	const { deliveryMethods, paymentMethods, orderStatuses } = useOrderOptions();
 	const [orderNumber, setOrderNumber] = useState("");
 	const [orderDate, setOrderDate] = useState("");
@@ -153,8 +159,91 @@ function OrderCreatePage() {
 	// Calculate total
 	const total = subtotal + shipping;
 
+	const handleSubmit = async () => {
+		// Validate required fields
+		if (!orderNumber || !orderDate || !deliveryDate) {
+			enqueueSnackbar("Please fill in all required fields", {
+				variant: "error",
+			});
+			return;
+		}
+
+		if (!buyer || !buyerPhone || !buyerAddress) {
+			enqueueSnackbar("Please select buyer, buyer phone, and buyer address", {
+				variant: "error",
+			});
+			return;
+		}
+
+		if (!recipient || !recipientPhone || !recipientAddress) {
+			enqueueSnackbar(
+				"Please select recipient, recipient phone, and recipient address",
+				{ variant: "error" },
+			);
+			return;
+		}
+
+		if (
+			deliveryMethodId === null ||
+			paymentMethodId === null ||
+			orderStatusId === null
+		) {
+			enqueueSnackbar(
+				"Please select delivery method, payment method, and order status",
+				{ variant: "error" },
+			);
+			return;
+		}
+
+		if (cartItems.length === 0) {
+			enqueueSnackbar("Please add at least one item to the order", {
+				variant: "error",
+			});
+			return;
+		}
+
+		// Parse shipping cost from formatted string
+		const shippingCostValue = shippingCost
+			? parseInt(shippingCost.replace(/\D/g, ""), 10) || 0
+			: 0;
+
+		try {
+			await create({
+				order_number: orderNumber,
+				order_date: `${orderDate}T00:00:00Z`,
+				delivery_date: `${deliveryDate}T00:00:00Z`,
+				buyer: {
+					id: buyer.id,
+					phone: { id: buyerPhone.id },
+					address: { id: buyerAddress.id },
+				},
+				recipient: {
+					id: recipient.id,
+					phone: { id: recipientPhone.id },
+					address: { id: recipientAddress.id },
+				},
+				delivery_method_id: deliveryMethodId,
+				payment_method_id: paymentMethodId,
+				order_status_id: orderStatusId,
+				shipping_cost: shippingCostValue,
+				note: note || undefined,
+				items: cartItems.map((cartItem) => ({
+					item_id: cartItem.item.id,
+					quantity: cartItem.quantity,
+				})),
+			});
+			enqueueSnackbar("Order created successfully", { variant: "success" });
+			navigate("/orders");
+		} catch (e) {
+			enqueueSnackbar(
+				e instanceof Error ? e.message : "Failed to create order",
+				{ variant: "error" },
+			);
+		}
+	};
+
 	return (
-		<Container sx={{ py: 4 }}>
+		<Container sx={{ py: 4, pb: 11 }}>
 			<Typography variant="h4" gutterBottom>
 				Create Order
 			</Typography>
@@ -190,6 +279,8 @@ function OrderCreatePage() {
 				onOpenDeliveryMethodDrawer={() => setOptionDrawerMode("delivery")}
 				onOpenPaymentMethodDrawer={() => setOptionDrawerMode("payment")}
 				onOpenOrderStatusDrawer={() => setOptionDrawerMode("status")}
+				onSubmit={handleSubmit}
+				loading={loading}
 			/>
 			<PersonSelectorDrawer
 				open={drawerMode !== null}
