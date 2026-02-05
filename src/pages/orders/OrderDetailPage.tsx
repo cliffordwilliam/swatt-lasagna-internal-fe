@@ -12,10 +12,7 @@ import { useParams } from "react-router-dom";
 import type { Address } from "../../api/addresses";
 import type { Person } from "../../api/persons";
 import type { Phone } from "../../api/phones";
-import {
-	type CartItem,
-	CartItemsManager,
-} from "../../components/orders/CartItemsManager";
+import type { CartItem } from "../../components/orders/CartItemsManager";
 import { OrderForm } from "../../components/orders/OrderForm";
 import { PageError } from "../../components/ui/PageError";
 import { PageLoading } from "../../components/ui/PageLoading";
