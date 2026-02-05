@@ -1,5 +1,6 @@
 import { Box, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
+import { normalizeNameForDb } from "../../utils/string";
 
 export interface AddressFormValues {
 	address: string;
@@ -27,7 +28,7 @@ export function AddressForm({
 		e.preventDefault();
 		try {
 			await onSubmit({
-				address: address.trim(),
+				address: normalizeNameForDb(address),
 			});
 		} catch {
 			// Error handled by parent / snackbar
@@ -46,6 +47,7 @@ export function AddressForm({
 				label="Address"
 				value={address}
 				onChange={(e) => setAddress(e.target.value)}
+				onBlur={(e) => setAddress(normalizeNameForDb(e.target.value))}
 				margin="normal"
 				required
 				multiline

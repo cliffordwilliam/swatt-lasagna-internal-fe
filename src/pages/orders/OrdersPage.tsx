@@ -32,6 +32,13 @@ function OrdersPage() {
 		setDrawerOpen(false);
 	};
 
+	const handleView = () => {
+		if (selectedOrder) {
+			navigate(`/orders/${selectedOrder.id}`);
+		}
+		setDrawerOpen(false);
+	};
+
 	const handleUpdate = () => {
 		if (selectedOrder) {
 			navigate(`/orders/${selectedOrder.id}/edit`);
@@ -97,6 +104,7 @@ function OrdersPage() {
 			<OrderActionsDrawer
 				open={drawerOpen}
 				onClose={handleDrawerClose}
+				onView={handleView}
 				onUpdate={handleUpdate}
 			/>
 		</Container>

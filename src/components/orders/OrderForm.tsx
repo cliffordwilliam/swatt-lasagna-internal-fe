@@ -9,6 +9,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import {
 	Avatar,
 	Box,
+	CircularProgress,
 	Fab,
 	List,
 	ListItem,
@@ -30,7 +31,7 @@ import type {
 import type { Person } from "../../api/persons";
 import type { Phone } from "../../api/phones";
 import { formatIDR } from "../../utils/money";
-import { normalizeSpaces } from "../../utils/string";
+import { normalizeNameForDb } from "../../utils/string";
 
 export interface OrderFormProps {
 	orderNumber: string;
@@ -67,6 +68,7 @@ export interface OrderFormProps {
 	onSubmit?: () => void | Promise<void>;
 	loading?: boolean;
 	submitLabel?: string;
+	readOnly?: boolean;
 }
 
 interface PersonListItemProps {
@@ -74,6 +76,7 @@ interface PersonListItemProps {
 	placeholder: string;
 	label: string;
 	onClick: () => void;
+	readOnly?: boolean;
 }
 
 function PersonSelectionRow({
@@ -81,10 +84,11 @@ function PersonSelectionRow({
 	placeholder,
 	label,
 	onClick,
+	readOnly = false,
 }: PersonListItemProps) {
 	return (
 		<ListItem disablePadding divider>
-			<ListItemButton onClick={onClick}>
+			<ListItemButton onClick={onClick} disabled={readOnly}>
 				<ListItemAvatar>
 					<Avatar>
 						<PersonIcon />
@@ -94,7 +98,7 @@ function PersonSelectionRow({
 					primary={person ? person.name : placeholder}
 					secondary={person ? label : "Tap to choose"}
 				/>
-				<ChevronRightIcon />
+				{!readOnly && <ChevronRightIcon />}
 			</ListItemButton>
 		</ListItem>
 	);
@@ -106,6 +110,7 @@ interface PhoneListItemProps {
 	label: string;
 	onClick: () => void;
 	disabled: boolean;
+	readOnly?: boolean;
 }
 
 function PhoneSelectionRow({
@@ -114,10 +119,11 @@ function PhoneSelectionRow({
 	label,
 	onClick,
 	disabled,
+	readOnly = false,
 }: PhoneListItemProps) {
 	return (
 		<ListItem disablePadding divider>
-			<ListItemButton onClick={onClick} disabled={disabled}>
+			<ListItemButton onClick={onClick} disabled={disabled || readOnly}>
 				<ListItemAvatar>
 					<Avatar>
 						<PhoneIcon />
@@ -129,7 +135,7 @@ function PhoneSelectionRow({
 						phone ? label : disabled ? "Select person first" : "Tap to choose"
 					}
 				/>
-				<ChevronRightIcon />
+				{!readOnly && <ChevronRightIcon />}
 			</ListItemButton>
 		</ListItem>
 	);
@@ -141,6 +147,7 @@ interface AddressListItemProps {
 	label: string;
 	onClick: () => void;
 	disabled: boolean;
+	readOnly?: boolean;
 }
 
 function AddressSelectionRow({
@@ -149,10 +156,11 @@ function AddressSelectionRow({
 	label,
 	onClick,
 	disabled,
+	readOnly = false,
 }: AddressListItemProps) {
 	return (
 		<ListItem disablePadding divider>
-			<ListItemButton onClick={onClick} disabled={disabled}>
+			<ListItemButton onClick={onClick} disabled={disabled || readOnly}>
 				<ListItemAvatar>
 					<Avatar>
 						<LocationOnIcon />
@@ -164,7 +172,7 @@ function AddressSelectionRow({
 						address ? label : disabled ? "Select person first" : "Tap to choose"
 					}
 				/>
-				<ChevronRightIcon />
+				{!readOnly && <ChevronRightIcon />}
 			</ListItemButton>
 		</ListItem>
 	);
@@ -176,6 +184,7 @@ interface OptionSelectionRowProps {
 	label: string;
 	onClick: () => void;
 	icon: React.ReactNode;
+	readOnly?: boolean;
 }
 
 function OptionSelectionRow({
@@ -184,10 +193,11 @@ function OptionSelectionRow({
 	label,
 	onClick,
 	icon,
+	readOnly = false,
 }: OptionSelectionRowProps) {
 	return (
 		<ListItem disablePadding divider>
-			<ListItemButton onClick={onClick}>
+			<ListItemButton onClick={onClick} disabled={readOnly}>
 				<ListItemAvatar>
 					<Avatar>{icon}</Avatar>
 				</ListItemAvatar>
@@ -195,7 +205,7 @@ function OptionSelectionRow({
 					primary={selectedName ?? placeholder}
 					secondary={selectedName ? label : "Tap to choose"}
 				/>
-				<ChevronRightIcon />
+				{!readOnly && <ChevronRightIcon />}
 			</ListItemButton>
 		</ListItem>
 	);
@@ -236,6 +246,7 @@ export function OrderForm({
 	onSubmit,
 	loading = false,
 	submitLabel = "Create Order",
+	readOnly = false,
 }: OrderFormProps) {
 	const handleShippingCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value.replace(/\D/g, "");
@@ -284,10 +295,11 @@ export function OrderForm({
 							value={orderNumber}
 							onChange={(e) => onOrderNumberChange(e.target.value)}
 							onBlur={(e) =>
-								onOrderNumberChange(normalizeSpaces(e.target.value))
+								onOrderNumberChange(normalizeNameForDb(e.target.value))
 							}
 							margin="normal"
 							required
+							disabled={readOnly}
 							slotProps={{ htmlInput: { maxLength: 50 } }}
 						/>
 						<DatePicker
@@ -298,6 +310,7 @@ export function OrderForm({
 									newValue ? newValue.format("YYYY-MM-DD") : "",
 								);
 							}}
+							disabled={readOnly}
 							slotProps={{
 								textField: {
 									fullWidth: true,
@@ -323,6 +336,7 @@ export function OrderForm({
 						placeholder="Select buyer"
 						label="Buyer"
 						onClick={onSelectBuyer}
+						readOnly={readOnly}
 					/>
 					<PhoneSelectionRow
 						phone={buyerPhone}
@@ -330,6 +344,7 @@ export function OrderForm({
 						label="Buyer Phone"
 						onClick={onSelectBuyerPhone}
 						disabled={!buyer}
+						readOnly={readOnly}
 					/>
 					<AddressSelectionRow
 						address={buyerAddress}
@@ -337,6 +352,7 @@ export function OrderForm({
 						label="Buyer Address"
 						onClick={onSelectBuyerAddress}
 						disabled={!buyer}
+						readOnly={readOnly}
 					/>
 				</List>
 			</Paper>
@@ -354,6 +370,7 @@ export function OrderForm({
 						placeholder="Select recipient"
 						label="Recipient"
 						onClick={onSelectRecipient}
+						readOnly={readOnly}
 					/>
 					<PhoneSelectionRow
 						phone={recipientPhone}
@@ -361,6 +378,7 @@ export function OrderForm({
 						label="Recipient Phone"
 						onClick={onSelectRecipientPhone}
 						disabled={!recipient}
+						readOnly={readOnly}
 					/>
 					<AddressSelectionRow
 						address={recipientAddress}
@@ -368,6 +386,7 @@ export function OrderForm({
 						label="Recipient Address"
 						onClick={onSelectRecipientAddress}
 						disabled={!recipient}
+						readOnly={readOnly}
 					/>
 				</List>
 			</Paper>
@@ -386,6 +405,7 @@ export function OrderForm({
 						label="Delivery method"
 						onClick={onOpenDeliveryMethodDrawer}
 						icon={<LocalShippingIcon />}
+						readOnly={readOnly}
 					/>
 					<OptionSelectionRow
 						selectedName={paymentMethodName}
@@ -393,6 +413,7 @@ export function OrderForm({
 						label="Payment method"
 						onClick={onOpenPaymentMethodDrawer}
 						icon={<PaymentIcon />}
+						readOnly={readOnly}
 					/>
 					<OptionSelectionRow
 						selectedName={orderStatusName}
@@ -400,6 +421,7 @@ export function OrderForm({
 						label="Order status"
 						onClick={onOpenOrderStatusDrawer}
 						icon={<AssignmentIcon />}
+						readOnly={readOnly}
 					/>
 				</List>
 			</Paper>
@@ -428,6 +450,7 @@ export function OrderForm({
 									newValue ? newValue.format("YYYY-MM-DD") : "",
 								);
 							}}
+							disabled={readOnly}
 							slotProps={{
 								textField: {
 									fullWidth: true,
@@ -443,6 +466,7 @@ export function OrderForm({
 							onChange={handleShippingCostChange}
 							margin="normal"
 							required
+							disabled={readOnly}
 						/>
 						<TextField
 							fullWidth
@@ -452,12 +476,13 @@ export function OrderForm({
 							margin="normal"
 							multiline
 							rows={4}
+							disabled={readOnly}
 							slotProps={{ htmlInput: { maxLength: 500 } }}
 						/>
 					</ListItem>
 				</List>
 			</Paper>
-			{onSubmit && (
+			{onSubmit && !readOnly && (
 				<Fab
 					variant="extended"
 					color="primary"
@@ -469,7 +494,11 @@ export function OrderForm({
 					onClick={onSubmit}
 					disabled={loading}
 				>
-					<SaveIcon sx={{ mr: 1 }} />
+					{loading ? (
+						<CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
+					) : (
+						<SaveIcon sx={{ mr: 1 }} />
+					)}
 					{submitLabel}
 				</Fab>
 			)}

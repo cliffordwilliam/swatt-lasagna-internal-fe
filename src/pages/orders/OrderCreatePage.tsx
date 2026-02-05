@@ -23,6 +23,7 @@ import { OrderForm } from "../../components/orders/OrderForm";
 import { PersonSelectorDrawer } from "../../components/orders/PersonSelectorDrawer";
 import { PhoneSelectorDrawer } from "../../components/phones/PhoneSelectorDrawer";
 import { formatIDR } from "../../utils/money";
+import { normalizeNameForDb } from "../../utils/string";
 import { useCreateOrder } from "./useCreateOrder";
 import { useOrderOptions } from "./useOrderOptions";
 
@@ -209,7 +210,7 @@ function OrderCreatePage() {
 
 		try {
 			await create({
-				order_number: orderNumber,
+				order_number: normalizeNameForDb(orderNumber),
 				order_date: `${orderDate}T00:00:00Z`,
 				delivery_date: `${deliveryDate}T00:00:00Z`,
 				buyer: {

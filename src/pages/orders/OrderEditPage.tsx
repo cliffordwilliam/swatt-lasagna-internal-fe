@@ -25,6 +25,7 @@ import { PhoneSelectorDrawer } from "../../components/phones/PhoneSelectorDrawer
 import { PageError } from "../../components/ui/PageError";
 import { PageLoading } from "../../components/ui/PageLoading";
 import { formatIDR } from "../../utils/money";
+import { normalizeNameForDb } from "../../utils/string";
 import { useOrder } from "./useOrder";
 import { useOrderOptions } from "./useOrderOptions";
 import { useUpdateOrder } from "./useUpdateOrder";
@@ -247,7 +248,7 @@ function OrderEditPage() {
 
 		try {
 			await update(id, {
-				order_number: orderNumber,
+				order_number: normalizeNameForDb(orderNumber),
 				order_date: `${orderDate}T00:00:00Z`,
 				delivery_date: `${deliveryDate}T00:00:00Z`,
 				buyer: {
