@@ -48,7 +48,7 @@ export function PhoneForm({
 				onChange={(e) => setPhoneNumber(e.target.value)}
 				margin="normal"
 				required
-				inputProps={{ maxLength: 25 }}
+				slotProps={{ htmlInput: { maxLength: 25 } }}
 			/>
 		</Box>
 	);

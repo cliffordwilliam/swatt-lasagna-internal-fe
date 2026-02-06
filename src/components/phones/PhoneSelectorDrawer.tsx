@@ -10,9 +10,10 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Phone } from "../../api/phones";
 import { searchPhones } from "../../api/phones";
+import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
 import { PhoneCreateDialog } from "./PhoneCreateDialog";
 import { PhonesList } from "./PhonesList";
 
@@ -37,38 +38,6 @@ export function PhoneSelectorDrawer({
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searching, setSearching] = useState(false);
 	const [searchError, setSearchError] = useState<string | null>(null);
-	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-	const DEBOUNCE_MS = 300;
-
-	const resetState = useCallback(() => {
-		if (debounceRef.current !== null) {
-			clearTimeout(debounceRef.current);
-			debounceRef.current = null;
-		}
-		setPhones([]);
-		setSearchQuery("");
-		setSearchError(null);
-		setSearching(false);
-	}, []);
-
-	useEffect(() => {
-		if (!open) return;
-		resetState();
-	}, [open, resetState]);
-
-	useEffect(() => {
-		return () => {
-			if (debounceRef.current !== null) {
-				clearTimeout(debounceRef.current);
-			}
-		};
-	}, []);
-
-	const handlePhoneSelect = (phone: Phone) => {
-		onSelectPhone(phone);
-		onClose();
-	};
 
 	const runSearch = useCallback(
 		async (query: string) => {
@@ -89,28 +58,39 @@ export function PhoneSelectorDrawer({
 		[getToken, personId],
 	);
 
+	const [debouncedRunSearch, cancelDebounce] = useDebouncedCallback(runSearch);
+
+	const resetState = useCallback(() => {
+		cancelDebounce();
+		setPhones([]);
+		setSearchQuery("");
+		setSearchError(null);
+		setSearching(false);
+	}, [cancelDebounce]);
+
+	useEffect(() => {
+		if (!open) return;
+		resetState();
+	}, [open, resetState]);
+
+	const handlePhoneSelect = (phone: Phone) => {
+		onSelectPhone(phone);
+		onClose();
+	};
+
 	const handleQueryChange = useCallback(
 		(value: string) => {
 			setSearchQuery(value);
 			setSearchError(null);
 			const trimmed = value.trim();
 			if (trimmed.length === 0) {
+				cancelDebounce();
 				setPhones([]);
-				if (debounceRef.current !== null) {
-					clearTimeout(debounceRef.current);
-					debounceRef.current = null;
-				}
 				return;
 			}
-			if (debounceRef.current !== null) {
-				clearTimeout(debounceRef.current);
-			}
-			debounceRef.current = setTimeout(() => {
-				debounceRef.current = null;
-				runSearch(trimmed);
-			}, DEBOUNCE_MS);
+			debouncedRunSearch(trimmed);
 		},
-		[runSearch],
+		[cancelDebounce, debouncedRunSearch],
 	);
 
 	const emptyMessage = searching
@@ -126,15 +106,12 @@ export function PhoneSelectorDrawer({
 	};
 
 	const handleCreateSuccess = useCallback(() => {
-		if (debounceRef.current !== null) {
-			clearTimeout(debounceRef.current);
-			debounceRef.current = null;
-		}
+		cancelDebounce();
 		setSearchQuery("");
 		setPhones([]);
 		setSearchError(null);
 		setSearching(false);
-	}, []);
+	}, [cancelDebounce]);
 
 	return (
 		<Drawer

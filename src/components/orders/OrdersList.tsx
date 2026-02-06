@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import type { ChipProps } from "@mui/material/Chip";
 import type { Order } from "../../api/orders";
+import { formatDate } from "../../utils/date";
 import { formatIDR } from "../../utils/money";
 
 function getOrderStatusColor(statusName: string): ChipProps["color"] {
@@ -25,14 +26,6 @@ function getOrderStatusColor(statusName: string): ChipProps["color"] {
 		default:
 			return "default";
 	}
-}
-
-function formatDate(isoString: string): string {
-	return new Date(isoString).toLocaleDateString("id-ID", {
-		day: "numeric",
-		month: "short",
-		year: "numeric",
-	});
 }
 
 export function OrdersList({

@@ -2,7 +2,11 @@ import SaveIcon from "@mui/icons-material/Save";
 import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { formatIDR } from "../../utils/money";
-import { normalizeNameForDb } from "../../utils/string";
+import {
+	digitsOnly,
+	normalizeNameForDb,
+	parseIntFromFormatted,
+} from "../../utils/string";
 
 export interface ItemFormValues {
 	name: string;
@@ -38,7 +42,7 @@ export function ItemForm({
 		try {
 			await onSubmit({
 				name: normalizeNameForDb(name),
-				price: parseInt(price.replace(/\D/g, ""), 10),
+				price: parseIntFromFormatted(price),
 			});
 		} catch {
 			// Error handled by parent / snackbar
@@ -46,7 +50,7 @@ export function ItemForm({
 	};
 
 	const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value.replace(/\D/g, "");
+		const value = digitsOnly(e.target.value);
 		if (value === "") {
 			setPrice("");
 			return;

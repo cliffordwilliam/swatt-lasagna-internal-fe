@@ -8,9 +8,10 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Item } from "../../api/items";
 import { listItems } from "../../api/items";
+import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
 import { normalizeNameForDb } from "../../utils/string";
 import { ItemsListForSelector } from "../items/ItemsListForSelector";
 
@@ -33,20 +34,21 @@ export function ItemSelectorDrawer({
 	const [searchQuery, setSearchQuery] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-	const DEBOUNCE_MS = 300;
+	const [debouncedFilter, cancelDebounce] = useDebouncedCallback(() => {
+		const normalized = normalizeNameForDb(searchQuery);
+		const filtered = allItems.filter((item) =>
+			normalizeNameForDb(item.name ?? "").includes(normalized),
+		);
+		setFilteredItems(filtered);
+	});
 
 	const resetState = useCallback(() => {
-		if (debounceRef.current !== null) {
-			clearTimeout(debounceRef.current);
-			debounceRef.current = null;
-		}
+		cancelDebounce();
 		setSearchQuery("");
 		setError(null);
 		setLoading(false);
 		setFilteredItems([]);
-	}, []);
+	}, [cancelDebounce]);
 
 	const loadItems = useCallback(async () => {
 		setLoading(true);
@@ -69,14 +71,6 @@ export function ItemSelectorDrawer({
 		loadItems();
 	}, [open, resetState, loadItems]);
 
-	useEffect(() => {
-		return () => {
-			if (debounceRef.current !== null) {
-				clearTimeout(debounceRef.current);
-			}
-		};
-	}, []);
-
 	const handleItemSelect = (item: Item) => {
 		onSelectItem(item);
 		onClose();
@@ -88,24 +82,15 @@ export function ItemSelectorDrawer({
 			setError(null);
 			const normalized = normalizeNameForDb(value);
 
-			if (debounceRef.current !== null) {
-				clearTimeout(debounceRef.current);
-			}
-
 			if (normalized.length === 0) {
+				cancelDebounce();
 				setFilteredItems(allItems);
 				return;
 			}
 
-			debounceRef.current = setTimeout(() => {
-				debounceRef.current = null;
-				const filtered = allItems.filter((item) =>
-					normalizeNameForDb(item.name ?? "").includes(normalized),
-				);
-				setFilteredItems(filtered);
-			}, DEBOUNCE_MS);
+			debouncedFilter();
 		},
-		[allItems],
+		[allItems, cancelDebounce, debouncedFilter],
 	);
 
 	const emptyMessage = loading

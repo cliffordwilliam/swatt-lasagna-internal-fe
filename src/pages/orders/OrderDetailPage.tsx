@@ -17,6 +17,8 @@ import { OrderForm } from "../../components/orders/OrderForm";
 import { PageError } from "../../components/ui/PageError";
 import { PageLoading } from "../../components/ui/PageLoading";
 import { formatIDR } from "../../utils/money";
+import { calculateSubtotal, calculateTotal } from "../../utils/orderSummary";
+import { parseIntFromFormatted } from "../../utils/string";
 import { useOrder } from "./useOrder";
 import { useOrderOptions } from "./useOrderOptions";
 
@@ -90,19 +92,9 @@ function OrderDetailPage() {
 		}
 	}, [order]);
 
-	// Calculate subtotal from cart items
-	const subtotal = cartItems.reduce(
-		(sum, cartItem) => sum + cartItem.item.price * cartItem.quantity,
-		0,
-	);
-
-	// Parse shipping cost from formatted string (remove non-digits)
-	const shipping = shippingCost
-		? parseInt(shippingCost.replace(/\D/g, ""), 10) || 0
-		: 0;
-
-	// Calculate total
-	const total = subtotal + shipping;
+	const subtotal = calculateSubtotal(cartItems);
+	const shipping = parseIntFromFormatted(shippingCost);
+	const total = calculateTotal(subtotal, shipping);
 
 	if (loading) return <PageLoading />;
 	if (error) {

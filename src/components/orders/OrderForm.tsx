@@ -31,7 +31,7 @@ import type {
 import type { Person } from "../../api/persons";
 import type { Phone } from "../../api/phones";
 import { formatIDR } from "../../utils/money";
-import { normalizeNameForDb } from "../../utils/string";
+import { digitsOnly, normalizeNameForDb } from "../../utils/string";
 
 export interface OrderFormProps {
 	orderNumber: string;
@@ -249,7 +249,7 @@ export function OrderForm({
 	readOnly = false,
 }: OrderFormProps) {
 	const handleShippingCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value.replace(/\D/g, "");
+		const value = digitsOnly(e.target.value);
 		if (value === "") {
 			onShippingCostChange("");
 			return;
