@@ -11,8 +11,37 @@ export interface Order {
 	total_amount: number;
 }
 
-export function listOrders(token: string | null) {
-	return apiFetch<Order[]>("/api/orders/", token);
+export interface ListOrdersParams {
+	order_number?: string;
+	order_date_from?: string;
+	order_date_to?: string;
+	order_status_id?: number;
+}
+
+function buildOrdersQuery(params: ListOrdersParams): string {
+	const search = new URLSearchParams();
+	if (params.order_number?.trim()) {
+		search.set("order_number", params.order_number.trim());
+	}
+	if (params.order_date_from) {
+		search.set("order_date_from", params.order_date_from);
+	}
+	if (params.order_date_to) {
+		search.set("order_date_to", params.order_date_to);
+	}
+	if (params.order_status_id != null) {
+		search.set("order_status_id", String(params.order_status_id));
+	}
+	const qs = search.toString();
+	return qs ? `?${qs}` : "";
+}
+
+export function listOrders(
+	token: string | null,
+	params: ListOrdersParams = {},
+) {
+	const query = buildOrdersQuery(params);
+	return apiFetch<Order[]>(`/api/orders/${query}`, token);
 }
 
 export interface DeliveryMethod {
