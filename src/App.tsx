@@ -1,4 +1,5 @@
 import { SignedIn, SignedOut, SignIn, UserButton } from "@clerk/clerk-react";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import {
@@ -20,6 +21,7 @@ import {
 	useLocation,
 	useNavigate,
 } from "react-router-dom";
+import DashboardPage from "./pages/dashboard/DashboardPage";
 import ItemCreatePage from "./pages/items/ItemCreatePage";
 import ItemEditPage from "./pages/items/ItemEditPage";
 import ItemsPage from "./pages/items/ItemsPage";
@@ -33,8 +35,9 @@ function AppContent() {
 	const location = useLocation();
 
 	const getPageIndex = (pathname: string) => {
-		if (pathname.startsWith("/items")) return 1;
-		if (pathname.startsWith("/orders")) return 0;
+		if (pathname.startsWith("/dashboard")) return 0;
+		if (pathname.startsWith("/orders")) return 1;
+		if (pathname.startsWith("/items")) return 2;
 		return 0;
 	};
 
@@ -44,9 +47,12 @@ function AppContent() {
 	) => {
 		switch (newValue) {
 			case 0:
-				navigate("/orders");
+				navigate("/dashboard");
 				break;
 			case 1:
+				navigate("/orders");
+				break;
+			case 2:
 				navigate("/items");
 				break;
 		}
@@ -92,6 +98,7 @@ function AppContent() {
 						}}
 					>
 						<Routes>
+							<Route path="/dashboard" element={<DashboardPage />} />
 							<Route path="/orders" element={<OrdersPage />} />
 							<Route path="/orders/create" element={<OrderCreatePage />} />
 							<Route path="/orders/:id/edit" element={<OrderEditPage />} />
@@ -99,7 +106,7 @@ function AppContent() {
 							<Route path="/items" element={<ItemsPage />} />
 							<Route path="/items/create" element={<ItemCreatePage />} />
 							<Route path="/items/:id/edit" element={<ItemEditPage />} />
-							<Route path="*" element={<Navigate to="/orders" replace />} />
+							<Route path="*" element={<Navigate to="/dashboard" replace />} />
 						</Routes>
 					</Box>
 					<Box sx={{ pb: 7, flexShrink: 0 }} />
@@ -112,6 +119,10 @@ function AppContent() {
 							onChange={handleNavigationChange}
 							showLabels
 						>
+							<BottomNavigationAction
+								label="Dashboard"
+								icon={<DashboardIcon />}
+							/>
 							<BottomNavigationAction
 								label="Orders"
 								icon={<ShoppingCartIcon />}
