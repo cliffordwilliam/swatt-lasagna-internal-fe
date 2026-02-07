@@ -136,6 +136,7 @@ export function CartItemsManager({
 
 			<Box sx={{ mt: 2 }}>
 				<Button
+					size="large"
 					variant="outlined"
 					startIcon={<AddIcon />}
 					onClick={handleAddItem}

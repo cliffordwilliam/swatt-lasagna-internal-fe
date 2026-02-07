@@ -1,10 +1,11 @@
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import {
-	Box,
+	Button,
 	Container,
 	Fab,
 	InputAdornment,
+	Stack,
 	TextField,
 	ToggleButton,
 	ToggleButtonGroup,
@@ -31,18 +32,44 @@ function OrdersPage() {
 	const [orderDateTo, setOrderDateTo] = useState<string | null>(null);
 	const [orderStatusId, setOrderStatusId] = useState<number | "">("");
 
+	const [orderNumberFilter, setOrderNumberFilter] = useState("");
+	const [orderDateFromFilter, setOrderDateFromFilter] = useState<string | null>(
+		null,
+	);
+	const [orderDateToFilter, setOrderDateToFilter] = useState<string | null>(
+		null,
+	);
+	const [orderStatusIdFilter, setOrderStatusIdFilter] = useState<number | "">(
+		"",
+	);
+
 	const filters: ListOrdersParams = useMemo(() => {
 		const f: ListOrdersParams = {};
-		if (orderNumber.trim()) f.order_number = orderNumber.trim();
-		if (orderDateFrom) {
-			f.order_date_from = dayjs(orderDateFrom).startOf("day").toISOString();
+		if (orderNumberFilter.trim()) f.order_number = orderNumberFilter.trim();
+		if (orderDateFromFilter) {
+			f.order_date_from = dayjs(orderDateFromFilter)
+				.startOf("day")
+				.toISOString();
 		}
-		if (orderDateTo) {
-			f.order_date_to = dayjs(orderDateTo).endOf("day").toISOString();
+		if (orderDateToFilter) {
+			f.order_date_to = dayjs(orderDateToFilter).endOf("day").toISOString();
 		}
-		if (orderStatusId !== "") f.order_status_id = orderStatusId as number;
+		if (orderStatusIdFilter !== "")
+			f.order_status_id = orderStatusIdFilter as number;
 		return f;
-	}, [orderNumber, orderDateFrom, orderDateTo, orderStatusId]);
+	}, [
+		orderNumberFilter,
+		orderDateFromFilter,
+		orderDateToFilter,
+		orderStatusIdFilter,
+	]);
+
+	const applyFilters = () => {
+		setOrderNumberFilter(orderNumber.trim());
+		setOrderDateFromFilter(orderDateFrom);
+		setOrderDateToFilter(orderDateTo);
+		setOrderStatusIdFilter(orderStatusId);
+	};
 
 	const { orders, loading, error } = useOrders(filters);
 	const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -89,7 +116,7 @@ function OrdersPage() {
 				Orders
 			</Typography>
 
-			<Box sx={{ display: "flex", flexDirection: "column", gap: 2, mb: 3 }}>
+			<Stack spacing={2} marginBottom={3}>
 				<TextField
 					id="filter-order-number"
 					placeholder="Order number"
@@ -97,6 +124,9 @@ function OrdersPage() {
 					fullWidth
 					value={orderNumber}
 					onChange={(e) => setOrderNumber(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") applyFilters();
+					}}
 					slotProps={{
 						input: {
 							startAdornment: (
@@ -131,30 +161,37 @@ function OrdersPage() {
 						},
 					}}
 				/>
-				<Box>
-					<ToggleButtonGroup
-						color="primary"
-						value={orderStatusId}
-						exclusive
-						onChange={handleStatusChange}
-						aria-label="Order status"
-						fullWidth
-					>
-						<ToggleButton value="" aria-label="All">
-							All
+				<ToggleButtonGroup
+					color="primary"
+					value={orderStatusId}
+					exclusive
+					onChange={handleStatusChange}
+					aria-label="Order status"
+					fullWidth
+				>
+					<ToggleButton value="" aria-label="All">
+						All
+					</ToggleButton>
+					{orderStatuses.map((status) => (
+						<ToggleButton
+							key={status.id}
+							value={status.id}
+							aria-label={status.name}
+						>
+							{status.name}
 						</ToggleButton>
-						{orderStatuses.map((status) => (
-							<ToggleButton
-								key={status.id}
-								value={status.id}
-								aria-label={status.name}
-							>
-								{status.name}
-							</ToggleButton>
-						))}
-					</ToggleButtonGroup>
-				</Box>
-			</Box>
+					))}
+				</ToggleButtonGroup>
+				<Button
+					size="large"
+					variant="contained"
+					fullWidth
+					onClick={applyFilters}
+					aria-label="Apply filters"
+				>
+					Search
+				</Button>
+			</Stack>
 
 			{orders.length === 0 ? (
 				<Typography>No orders found.</Typography>
