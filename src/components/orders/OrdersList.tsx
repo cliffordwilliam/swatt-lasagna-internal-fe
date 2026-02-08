@@ -10,23 +10,10 @@ import {
 	Stack,
 	Typography,
 } from "@mui/material";
-import type { ChipProps } from "@mui/material/Chip";
 import type { Order } from "../../api/orders";
 import { formatDate } from "../../utils/date";
 import { formatIDR } from "../../utils/money";
-
-function getOrderStatusColor(statusName: string): ChipProps["color"] {
-	switch (statusName.toLowerCase()) {
-		case "belum bayar":
-			return "warning";
-		case "downpayment":
-			return "info";
-		case "lunas":
-			return "success";
-		default:
-			return "default";
-	}
-}
+import { getOrderStatusColor } from "../../utils/orderStatus";
 
 export function OrdersList({
 	orders,
