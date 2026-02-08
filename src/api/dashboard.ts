@@ -30,7 +30,6 @@ export interface RevenueTrendPoint {
 	date: string;
 	order_count: number;
 	revenue: number;
-	paid_revenue: number;
 }
 
 export interface TopItem {
