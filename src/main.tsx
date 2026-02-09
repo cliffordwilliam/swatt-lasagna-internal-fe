@@ -16,9 +16,7 @@ createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		<ClerkProvider
 			publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
-			signInFallbackRedirectUrl={
-				import.meta.env.VITE_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL
-			}
+			signInFallbackRedirectUrl={import.meta.env.VITE_BASE_PATH}
 		>
 			<CssBaseline />
 			<SnackbarProvider
