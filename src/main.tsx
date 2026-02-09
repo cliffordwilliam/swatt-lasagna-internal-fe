@@ -14,7 +14,12 @@ validateEnv();
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
+		<ClerkProvider
+			publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
+			signInFallbackRedirectUrl={
+				import.meta.env.VITE_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL
+			}
+		>
 			<CssBaseline />
 			<SnackbarProvider
 				maxSnack={3}
