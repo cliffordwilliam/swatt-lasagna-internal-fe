@@ -33,6 +33,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
+          VITE_BASE_PATH: /swatt-lasagna-internal-fe
           VITE_CLERK_PUBLISHABLE_KEY: pk_test_ZmFpdGhmdWwtZ2FubmV0LTE2LmNsZXJrLmFjY291bnRzLmRldiQ
           VITE_API_BASE_URL: https://swatt-lasagna-internal-api-production.up.railway.app
           

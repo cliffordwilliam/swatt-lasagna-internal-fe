@@ -1,5 +1,9 @@
 function validateEnv() {
-	const required = ["VITE_CLERK_PUBLISHABLE_KEY", "VITE_API_BASE_URL"];
+	const required = [
+		"VITE_CLERK_PUBLISHABLE_KEY",
+		"VITE_API_BASE_URL",
+		"VITE_BASE_PATH",
+	];
 
 	for (const key of required) {
 		if (!import.meta.env[key]) {

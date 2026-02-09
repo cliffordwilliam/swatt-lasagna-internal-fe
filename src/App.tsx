@@ -139,7 +139,7 @@ function AppContent() {
 function App() {
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
-			<BrowserRouter>
+			<BrowserRouter basename={import.meta.env.VITE_BASE_PATH}>
 				<AppContent />
 			</BrowserRouter>
 		</LocalizationProvider>
