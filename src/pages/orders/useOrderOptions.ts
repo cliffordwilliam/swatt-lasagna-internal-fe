@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import type {
 	DeliveryMethod,
@@ -10,9 +9,10 @@ import {
 	listOrderStatuses,
 	listPaymentMethods,
 } from "../../api/orders";
+import { useAuthToken } from "../../hooks/useAuthToken";
 
 export function useOrderOptions() {
-	const { getToken } = useAuth();
+	const { getAuthToken } = useAuthToken();
 	const [deliveryMethods, setDeliveryMethods] = useState<DeliveryMethod[]>([]);
 	const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
 	const [orderStatuses, setOrderStatuses] = useState<OrderStatus[]>([]);
@@ -22,7 +22,7 @@ export function useOrderOptions() {
 	useEffect(() => {
 		async function load() {
 			try {
-				const token = await getToken();
+				const token = await getAuthToken();
 				const [delivery, payment, status] = await Promise.all([
 					listDeliveryMethods(token),
 					listPaymentMethods(token),
@@ -38,7 +38,7 @@ export function useOrderOptions() {
 			}
 		}
 		load();
-	}, [getToken]);
+	}, [getAuthToken]);
 
 	return {
 		deliveryMethods,

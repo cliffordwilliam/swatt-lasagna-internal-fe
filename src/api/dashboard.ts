@@ -60,6 +60,6 @@ export interface DashboardResponse {
 	upcoming_deliveries: UpcomingDelivery[];
 }
 
-export function getDashboard(token: string | null) {
+export function getDashboard(token: string) {
 	return apiFetch<DashboardResponse>("/api/dashboard/", token);
 }

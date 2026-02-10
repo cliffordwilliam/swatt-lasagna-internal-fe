@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/clerk-react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {
 	Box,
@@ -11,6 +10,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import type { Item } from "../../api/items";
 import { listItems } from "../../api/items";
+import { useAuthToken } from "../../hooks/useAuthToken";
 import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
 import { normalizeNameForDb } from "../../utils/string";
 import { ItemsListForSelector } from "../items/ItemsListForSelector";
@@ -28,7 +28,7 @@ export function ItemSelectorDrawer({
 	onSelectItem,
 	selectedItemId = null,
 }: ItemSelectorDrawerProps) {
-	const { getToken } = useAuth();
+	const { getAuthToken } = useAuthToken();
 	const [allItems, setAllItems] = useState<Item[]>([]);
 	const [filteredItems, setFilteredItems] = useState<Item[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -54,7 +54,7 @@ export function ItemSelectorDrawer({
 		setLoading(true);
 		setError(null);
 		try {
-			const token = await getToken();
+			const token = await getAuthToken();
 			const items = await listItems(token);
 			setAllItems(items);
 			setFilteredItems(items);
@@ -63,7 +63,7 @@ export function ItemSelectorDrawer({
 		} finally {
 			setLoading(false);
 		}
-	}, [getToken]);
+	}, [getAuthToken]);
 
 	useEffect(() => {
 		if (!open) return;

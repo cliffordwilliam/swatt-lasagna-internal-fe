@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/clerk-react";
 import AddIcon from "@mui/icons-material/Add";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {
@@ -13,6 +12,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import type { Person } from "../../api/persons";
 import { searchPersons } from "../../api/persons";
+import { useAuthToken } from "../../hooks/useAuthToken";
 import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
 import { normalizeNameForDb } from "../../utils/string";
 import { PersonCreateDialog } from "../persons/PersonCreateDialog";
@@ -35,7 +35,7 @@ export function PersonSelectorDrawer({
 	onSelectPerson,
 	selectedPersonId = null,
 }: PersonSelectorDrawerProps) {
-	const { getToken } = useAuth();
+	const { getAuthToken } = useAuthToken();
 	const [persons, setPersons] = useState<Person[]>([]);
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -49,7 +49,7 @@ export function PersonSelectorDrawer({
 			setSearchError(null);
 			setPersons([]);
 			try {
-				const token = await getToken();
+				const token = await getAuthToken();
 				const results = await searchPersons(normalized, token);
 				setPersons(results);
 			} catch (error) {
@@ -58,7 +58,7 @@ export function PersonSelectorDrawer({
 				setSearching(false);
 			}
 		},
-		[getToken],
+		[getAuthToken],
 	);
 
 	const [debouncedRunSearch, cancelDebounce] = useDebouncedCallback(runSearch);

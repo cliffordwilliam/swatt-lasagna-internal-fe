@@ -1,10 +1,10 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useState } from "react";
 import type { UpdateItemRequest } from "../../api/items";
 import { updateItem } from "../../api/items";
+import { useAuthToken } from "../../hooks/useAuthToken";
 
 export function useUpdateItem() {
-	const { getToken } = useAuth();
+	const { getAuthToken } = useAuthToken();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -12,7 +12,7 @@ export function useUpdateItem() {
 		setLoading(true);
 		setError(null);
 		try {
-			await updateItem(id, data, await getToken());
+			await updateItem(id, data, await getAuthToken());
 		} catch (e) {
 			setError((e as Error).message);
 			throw e;

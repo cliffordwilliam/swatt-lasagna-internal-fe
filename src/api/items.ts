@@ -6,11 +6,11 @@ export interface Item {
 	price: number;
 }
 
-export function listItems(token: string | null) {
+export function listItems(token: string) {
 	return apiFetch<Item[]>("/api/items/", token);
 }
 
-export function getItem(id: string, token: string | null) {
+export function getItem(id: string, token: string) {
 	return apiFetch<Item>(`/api/items/${id}`, token);
 }
 
@@ -19,7 +19,7 @@ export interface CreateItemRequest {
 	price: number;
 }
 
-export function createItem(data: CreateItemRequest, token: string | null) {
+export function createItem(data: CreateItemRequest, token: string) {
 	return apiFetch<void>("/api/items/", token, {
 		method: "POST",
 		body: JSON.stringify(data),
@@ -31,11 +31,7 @@ export interface UpdateItemRequest {
 	price: number;
 }
 
-export function updateItem(
-	id: string,
-	data: UpdateItemRequest,
-	token: string | null,
-) {
+export function updateItem(id: string, data: UpdateItemRequest, token: string) {
 	return apiFetch<void>(`/api/items/${id}`, token, {
 		method: "PUT",
 		body: JSON.stringify(data),

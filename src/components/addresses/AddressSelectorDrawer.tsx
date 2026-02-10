@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/clerk-react";
 import AddIcon from "@mui/icons-material/Add";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {
@@ -13,6 +12,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import type { Address } from "../../api/addresses";
 import { searchAddresses } from "../../api/addresses";
+import { useAuthToken } from "../../hooks/useAuthToken";
 import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
 import { AddressCreateDialog } from "./AddressCreateDialog";
 import { AddressesList } from "./AddressesList";
@@ -32,7 +32,7 @@ export function AddressSelectorDrawer({
 	onSelectAddress,
 	selectedAddressId = null,
 }: AddressSelectorDrawerProps) {
-	const { getToken } = useAuth();
+	const { getAuthToken } = useAuthToken();
 	const [addresses, setAddresses] = useState<Address[]>([]);
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -46,7 +46,7 @@ export function AddressSelectorDrawer({
 			setSearchError(null);
 			setAddresses([]);
 			try {
-				const token = await getToken();
+				const token = await getAuthToken();
 				const results = await searchAddresses(personId, query, token);
 				setAddresses(results);
 			} catch (error) {
@@ -55,7 +55,7 @@ export function AddressSelectorDrawer({
 				setSearching(false);
 			}
 		},
-		[getToken, personId],
+		[getAuthToken, personId],
 	);
 
 	const [debouncedRunSearch, cancelDebounce] = useDebouncedCallback(runSearch);

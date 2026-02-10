@@ -1,10 +1,10 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import type { ListOrdersParams, Order } from "../../api/orders";
 import { listOrders } from "../../api/orders";
+import { useAuthToken } from "../../hooks/useAuthToken";
 
 export function useOrders(filters: ListOrdersParams = {}) {
-	const { getToken } = useAuth();
+	const { getAuthToken } = useAuthToken();
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -14,7 +14,7 @@ export function useOrders(filters: ListOrdersParams = {}) {
 			try {
 				setLoading(true);
 				setError(null);
-				setOrders(await listOrders(await getToken(), filters));
+				setOrders(await listOrders(await getAuthToken(), filters));
 			} catch (e) {
 				setError((e as Error).message);
 			} finally {
@@ -22,7 +22,7 @@ export function useOrders(filters: ListOrdersParams = {}) {
 			}
 		}
 		load();
-	}, [getToken, filters]);
+	}, [getAuthToken, filters]);
 
 	return { orders, loading, error };
 }

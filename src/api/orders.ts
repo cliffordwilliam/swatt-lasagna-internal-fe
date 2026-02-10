@@ -36,10 +36,7 @@ function buildOrdersQuery(params: ListOrdersParams): string {
 	return qs ? `?${qs}` : "";
 }
 
-export function listOrders(
-	token: string | null,
-	params: ListOrdersParams = {},
-) {
+export function listOrders(token: string, params: ListOrdersParams = {}) {
 	const query = buildOrdersQuery(params);
 	return apiFetch<Order[]>(`/api/orders/${query}`, token);
 }
@@ -49,7 +46,7 @@ export interface DeliveryMethod {
 	name: string;
 }
 
-export function listDeliveryMethods(token: string | null) {
+export function listDeliveryMethods(token: string) {
 	return apiFetch<DeliveryMethod[]>("/api/delivery-methods/", token);
 }
 
@@ -58,7 +55,7 @@ export interface PaymentMethod {
 	name: string;
 }
 
-export function listPaymentMethods(token: string | null) {
+export function listPaymentMethods(token: string) {
 	return apiFetch<PaymentMethod[]>("/api/payment-methods/", token);
 }
 
@@ -67,7 +64,7 @@ export interface OrderStatus {
 	name: string;
 }
 
-export function listOrderStatuses(token: string | null) {
+export function listOrderStatuses(token: string) {
 	return apiFetch<OrderStatus[]>("/api/order-statuses/", token);
 }
 
@@ -96,7 +93,7 @@ export interface CreateOrderRequest {
 	}>;
 }
 
-export function createOrder(data: CreateOrderRequest, token: string | null) {
+export function createOrder(data: CreateOrderRequest, token: string) {
 	return apiFetch<void>("/api/orders/", token, {
 		method: "POST",
 		body: JSON.stringify(data),
@@ -144,7 +141,7 @@ export interface OrderDetail {
 	}>;
 }
 
-export function getOrder(id: string, token: string | null) {
+export function getOrder(id: string, token: string) {
 	return apiFetch<OrderDetail>(`/api/orders/${id}`, token);
 }
 
@@ -176,7 +173,7 @@ export interface UpdateOrderRequest {
 export function updateOrder(
 	id: string,
 	data: UpdateOrderRequest,
-	token: string | null,
+	token: string,
 ) {
 	return apiFetch<void>(`/api/orders/${id}`, token, {
 		method: "PUT",

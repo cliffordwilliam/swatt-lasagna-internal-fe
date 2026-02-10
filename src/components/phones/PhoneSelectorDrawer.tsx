@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/clerk-react";
 import AddIcon from "@mui/icons-material/Add";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {
@@ -13,6 +12,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import type { Phone } from "../../api/phones";
 import { searchPhones } from "../../api/phones";
+import { useAuthToken } from "../../hooks/useAuthToken";
 import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
 import { PhoneCreateDialog } from "./PhoneCreateDialog";
 import { PhonesList } from "./PhonesList";
@@ -32,7 +32,7 @@ export function PhoneSelectorDrawer({
 	onSelectPhone,
 	selectedPhoneId = null,
 }: PhoneSelectorDrawerProps) {
-	const { getToken } = useAuth();
+	const { getAuthToken } = useAuthToken();
 	const [phones, setPhones] = useState<Phone[]>([]);
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -46,7 +46,7 @@ export function PhoneSelectorDrawer({
 			setSearchError(null);
 			setPhones([]);
 			try {
-				const token = await getToken();
+				const token = await getAuthToken();
 				const results = await searchPhones(personId, query, token);
 				setPhones(results);
 			} catch (error) {
@@ -55,7 +55,7 @@ export function PhoneSelectorDrawer({
 				setSearching(false);
 			}
 		},
-		[getToken, personId],
+		[getAuthToken, personId],
 	);
 
 	const [debouncedRunSearch, cancelDebounce] = useDebouncedCallback(runSearch);

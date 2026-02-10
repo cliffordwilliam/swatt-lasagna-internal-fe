@@ -8,7 +8,7 @@ export interface Address {
 export function searchAddresses(
 	personId: number,
 	address: string,
-	token: string | null,
+	token: string,
 ) {
 	const params = new URLSearchParams({
 		person_id: personId.toString(),
@@ -25,10 +25,7 @@ export interface CreateAddressRequest {
 	address: string;
 }
 
-export function createAddress(
-	data: CreateAddressRequest,
-	token: string | null,
-) {
+export function createAddress(data: CreateAddressRequest, token: string) {
 	return apiFetch<void>("/api/addresses/", token, {
 		method: "POST",
 		body: JSON.stringify(data),

@@ -1,10 +1,10 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import type { Item } from "../../api/items";
 import { getItem } from "../../api/items";
+import { useAuthToken } from "../../hooks/useAuthToken";
 
 export function useItem(id: string | undefined) {
-	const { getToken } = useAuth();
+	const { getAuthToken } = useAuthToken();
 	const [item, setItem] = useState<Item | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -17,7 +17,7 @@ export function useItem(id: string | undefined) {
 				return;
 			}
 			try {
-				setItem(await getItem(id, await getToken()));
+				setItem(await getItem(id, await getAuthToken()));
 			} catch (e) {
 				setError((e as Error).message);
 			} finally {
@@ -25,7 +25,7 @@ export function useItem(id: string | undefined) {
 			}
 		}
 		load();
-	}, [id, getToken]);
+	}, [id, getAuthToken]);
 
 	return { item, loading, error };
 }

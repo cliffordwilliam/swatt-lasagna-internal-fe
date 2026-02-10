@@ -33,10 +33,9 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_BASE_PATH: /swatt-lasagna-internal-fe
-          VITE_CLERK_PUBLISHABLE_KEY: pk_test_ZmFpdGhmdWwtZ2FubmV0LTE2LmNsZXJrLmFjY291bnRzLmRldiQ
-          VITE_API_BASE_URL: https://swatt-lasagna-internal-api-production.up.railway.app
-          
+          VITE_BASE_PATH: ${{ secrets.VITE_BASE_PATH }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

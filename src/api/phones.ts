@@ -8,7 +8,7 @@ export interface Phone {
 export function searchPhones(
 	personId: number,
 	phoneNumber: string,
-	token: string | null,
+	token: string,
 ) {
 	const params = new URLSearchParams({
 		person_id: personId.toString(),
@@ -22,7 +22,7 @@ export interface CreatePhoneRequest {
 	phone_number: string;
 }
 
-export function createPhone(data: CreatePhoneRequest, token: string | null) {
+export function createPhone(data: CreatePhoneRequest, token: string) {
 	return apiFetch<void>("/api/phones/", token, {
 		method: "POST",
 		body: JSON.stringify(data),

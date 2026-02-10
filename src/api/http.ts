@@ -11,7 +11,7 @@ export class ApiError extends Error {
 
 export async function apiFetch<T>(
 	path: string,
-	token: string | null,
+	token: string,
 	options: RequestInit = {},
 ): Promise<T> {
 	const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}${path}`, {
